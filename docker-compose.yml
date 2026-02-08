@@ -6,10 +6,16 @@ services:
     # Map host port 3000 to container port 80
     # You can change '3000' to '80' if this is the only app on your VPS
     ports:
-      - "3000:80"
+      - "127.0.0.1:3002:80"
     # Optional: health check
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - npm-network
+
+networks:
+  npm-network:
+    external: true
