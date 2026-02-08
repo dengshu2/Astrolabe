@@ -1,26 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Compass, BarChart3, StarOff, Zap, Search } from "lucide-react";
-
-const features = [
-  {
-    icon: BarChart3,
-    title: "Visual Insights",
-    description:
-      "See stars by language, timeline, and health at a glance.",
-  },
-  {
-    icon: StarOff,
-    title: "Quick Cleanup",
-    description:
-      "Find stale and abandoned repos. Unstar them in one click.",
-  },
-  {
-    icon: Zap,
-    title: "Zero Friction",
-    description:
-      "Enter any GitHub username. No login, no setup, instant results.",
-  },
-];
+import { useLanguage } from "@/i18n";
 
 interface Props {
   onSubmit: (username: string) => void;
@@ -28,6 +8,25 @@ interface Props {
 
 export function LandingPage({ onSubmit }: Props) {
   const [input, setInput] = useState("");
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: BarChart3,
+      title: t.landing.features.visualInsights.title,
+      description: t.landing.features.visualInsights.description,
+    },
+    {
+      icon: StarOff,
+      title: t.landing.features.quickCleanup.title,
+      description: t.landing.features.quickCleanup.description,
+    },
+    {
+      icon: Zap,
+      title: t.landing.features.zeroFriction.title,
+      description: t.landing.features.zeroFriction.description,
+    },
+  ];
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -43,12 +42,12 @@ export function LandingPage({ onSubmit }: Props) {
           <Compass className="w-12 h-12 text-[var(--color-brand)]" />
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-          Explore your{" "}
-          <span className="text-[var(--color-brand)]">starred</span> universe
+          {t.landing.heroTitle}{" "}
+          <span className="text-[var(--color-brand)]">{t.landing.heroTitleHighlight}</span>{" "}
+          {t.landing.heroTitleEnd}
         </h1>
         <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed mb-8">
-          Visualize any GitHub user's stars. Find stale repos, discover
-          patterns, and clean up what you no longer need.
+          {t.landing.heroDescription}
         </p>
 
         {/* Username input */}
@@ -59,7 +58,7 @@ export function LandingPage({ onSubmit }: Props) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter a GitHub username..."
+              placeholder={t.landing.inputPlaceholder}
               autoFocus
               className="w-full pl-12 pr-28 py-3.5 rounded-xl bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)] text-base transition-colors"
             />
@@ -68,13 +67,13 @@ export function LandingPage({ onSubmit }: Props) {
               disabled={!input.trim()}
               className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 rounded-lg bg-[var(--color-brand)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
             >
-              Explore
+              {t.landing.exploreButton}
             </button>
           </div>
         </form>
 
         <p className="text-xs text-[var(--color-text-muted)] mt-3">
-          Try it with any public GitHub username — no sign-in needed
+          {t.landing.hint}
         </p>
       </div>
 

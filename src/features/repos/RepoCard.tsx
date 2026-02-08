@@ -10,25 +10,29 @@ import {
   classifyHealth,
   formatCount,
   getLanguageColor,
-  timeAgo,
 } from "@/lib/utils";
 import { LANGUAGE_COLORS } from "@/lib/constants";
+import { useLanguage } from "@/i18n";
+import { useTimeAgo } from "@/hooks/useTimeAgo";
 
 interface Props {
   repo: StarredRepo;
 }
 
-const healthBadge: Record<string, { label: string; className: string }> = {
-  active: { label: "Active", className: "bg-green-500/10 text-[var(--color-success)]" },
-  stale: { label: "Stale", className: "bg-yellow-500/10 text-[var(--color-warning)]" },
-  abandoned: { label: "Abandoned", className: "bg-red-500/10 text-[var(--color-danger)]" },
-  archived: { label: "Archived", className: "bg-gray-500/10 text-[var(--color-text-muted)]" },
-};
-
 export function RepoCard({ repo }: Props) {
+  const { t } = useLanguage();
+  const timeAgo = useTimeAgo();
   const health = classifyHealth(repo);
-  const badge = healthBadge[health];
   const langColor = getLanguageColor(repo.language, LANGUAGE_COLORS);
+
+  const healthBadge: Record<string, { label: string; className: string }> = {
+    active: { label: t.filters.active, className: "bg-green-500/10 text-[var(--color-success)]" },
+    stale: { label: t.filters.stale, className: "bg-yellow-500/10 text-[var(--color-warning)]" },
+    abandoned: { label: t.filters.abandoned, className: "bg-red-500/10 text-[var(--color-danger)]" },
+    archived: { label: t.filters.archived, className: "bg-gray-500/10 text-[var(--color-text-muted)]" },
+  };
+
+  const badge = healthBadge[health];
 
   return (
     <a
@@ -94,7 +98,7 @@ export function RepoCard({ repo }: Props) {
       {/* Hover hint */}
       <div className="flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-[var(--color-text-muted)]">
         <ExternalLink className="w-3 h-3" />
-        Open on GitHub
+        {t.repos.openOnGithub}
       </div>
     </a>
   );

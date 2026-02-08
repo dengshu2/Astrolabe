@@ -7,6 +7,7 @@ import { TimelineChart } from "./TimelineChart";
 import { RepoList } from "@/features/repos/RepoList";
 import { RefreshCw, AlertCircle, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   username: string;
@@ -15,6 +16,7 @@ interface Props {
 export function DashboardPage({ username }: Props) {
   const { repos, progress, reload } = useStars(username);
   const { languageStats, timeline, healthSummary } = useStarStats(repos);
+  const { t } = useLanguage();
 
   // Loading state — only show if we have no repos yet
   if (progress.status === "loading" && repos.length === 0) {
@@ -22,7 +24,7 @@ export function DashboardPage({ username }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-md mx-auto text-center">
           <p className="text-sm text-[var(--color-text-muted)] mb-4">
-            Loading stars for <span className="font-medium text-[var(--color-text-primary)]">{username}</span>...
+            {t.dashboard.loadingStars} <span className="font-medium text-[var(--color-text-primary)]">{username}</span>...
           </p>
           <ProgressBar loaded={progress.loaded} total={progress.total} />
         </div>
@@ -36,11 +38,11 @@ export function DashboardPage({ username }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center">
         <AlertCircle className="w-10 h-10 text-[var(--color-danger)] mx-auto mb-3" />
         <p className="text-[var(--color-text-secondary)] mb-4">
-          {progress.error ?? "Failed to load stars"}
+          {progress.error ?? t.dashboard.failedToLoad}
         </p>
         <Button variant="secondary" onClick={reload}>
           <RefreshCw className="w-4 h-4" />
-          Retry
+          {t.common.retry}
         </Button>
       </div>
     );
@@ -52,7 +54,7 @@ export function DashboardPage({ username }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center">
         <User className="w-10 h-10 text-[var(--color-text-muted)] mx-auto mb-3" />
         <p className="text-lg text-[var(--color-text-muted)]">
-          <span className="font-medium">{username}</span> hasn't starred any repos yet
+          <span className="font-medium">{username}</span> {t.dashboard.noStars}
         </p>
       </div>
     );
@@ -71,14 +73,14 @@ export function DashboardPage({ username }: Props) {
           >
             {username}
           </a>
-          <span className="text-[var(--color-text-primary)]">'s Stars</span>
+          <span className="text-[var(--color-text-primary)]">{t.dashboard.userStars}</span>
           <span className="ml-2 text-sm font-normal text-[var(--color-text-muted)]">
-            {repos.length} repos
+            {repos.length} {t.common.repos}
           </span>
         </h2>
         <Button variant="ghost" size="sm" onClick={reload}>
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          {t.common.refresh}
         </Button>
       </div>
 

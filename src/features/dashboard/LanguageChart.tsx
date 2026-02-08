@@ -1,18 +1,20 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import type { LanguageStat } from "@/types/github";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   data: LanguageStat[];
 }
 
 export function LanguageChart({ data }: Props) {
+  const { t } = useLanguage();
   // Data is already processed in useStarStats hook (top 10 + "Other")
   const chartData = data;
 
   return (
     <div className="bg-[var(--color-surface-raised)] rounded-xl border border-[var(--color-border)] p-5">
       <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-4">
-        Languages
+        {t.charts.languages}
       </h3>
       <div className="flex items-center gap-6">
         <div className="w-40 h-40 shrink-0">
@@ -62,7 +64,7 @@ export function LanguageChart({ data }: Props) {
                             marginTop: "4px",
                           }}
                         >
-                          {data.count} repos ({data.percentage}%)
+                          {data.count} {t.common.repos} ({data.percentage}%)
                         </div>
                       </div>
                     );

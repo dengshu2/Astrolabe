@@ -8,20 +8,23 @@ import {
   CartesianGrid,
 } from "recharts";
 import type { StarTimelineEntry } from "@/types/github";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   data: StarTimelineEntry[];
 }
 
 export function TimelineChart({ data }: Props) {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-[var(--color-surface-raised)] rounded-xl border border-[var(--color-border)] p-5">
       <div className="mb-4">
         <h3 className="text-sm font-medium text-[var(--color-text-secondary)]">
-          Star Timeline
+          {t.charts.starTimeline}
         </h3>
         <p className="text-xs text-[var(--color-text-muted)] mt-1">
-          按每月 star 数量统计，展示累计 star 趋势
+          {t.charts.timelineDescription}
         </p>
       </div>
       <div className="h-52">
@@ -68,7 +71,7 @@ export function TimelineChart({ data }: Props) {
                 fontSize: "12px",
               }}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={((value: number) => [`${value} total`, "Stars"]) as any}
+              formatter={((value: number) => [`${value} ${t.common.total}`, t.charts.stars]) as any}
             />
             <Area
               type="monotone"

@@ -1,5 +1,6 @@
 import { Activity, AlertTriangle, Archive, Skull } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   summary: {
@@ -11,38 +12,40 @@ interface Props {
   };
 }
 
-const cards = [
-  {
-    key: "active" as const,
-    label: "Active",
-    icon: Activity,
-    color: "text-[var(--color-success)]",
-    bg: "bg-green-500/10",
-  },
-  {
-    key: "stale" as const,
-    label: "Stale (1y+)",
-    icon: AlertTriangle,
-    color: "text-[var(--color-warning)]",
-    bg: "bg-yellow-500/10",
-  },
-  {
-    key: "abandoned" as const,
-    label: "Abandoned (2y+)",
-    icon: Skull,
-    color: "text-[var(--color-danger)]",
-    bg: "bg-red-500/10",
-  },
-  {
-    key: "archived" as const,
-    label: "Archived",
-    icon: Archive,
-    color: "text-[var(--color-text-muted)]",
-    bg: "bg-gray-500/10",
-  },
-];
-
 export function HealthSummary({ summary }: Props) {
+  const { t } = useLanguage();
+
+  const cards = [
+    {
+      key: "active" as const,
+      label: t.health.active,
+      icon: Activity,
+      color: "text-[var(--color-success)]",
+      bg: "bg-green-500/10",
+    },
+    {
+      key: "stale" as const,
+      label: t.health.stale,
+      icon: AlertTriangle,
+      color: "text-[var(--color-warning)]",
+      bg: "bg-yellow-500/10",
+    },
+    {
+      key: "abandoned" as const,
+      label: t.health.abandoned,
+      icon: Skull,
+      color: "text-[var(--color-danger)]",
+      bg: "bg-red-500/10",
+    },
+    {
+      key: "archived" as const,
+      label: t.health.archived,
+      icon: Archive,
+      color: "text-[var(--color-text-muted)]",
+      bg: "bg-gray-500/10",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {cards.map(({ key, label, icon: Icon, color, bg }) => (

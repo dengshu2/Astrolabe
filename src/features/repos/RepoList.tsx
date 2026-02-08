@@ -3,6 +3,7 @@ import type { RepoHealth, SortField, StarredRepo } from "@/types/github";
 import { classifyHealth } from "@/lib/utils";
 import { RepoCard } from "./RepoCard";
 import { RepoFilters } from "./RepoFilters";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   repos: StarredRepo[];
@@ -13,6 +14,7 @@ export function RepoList({ repos }: Props) {
   const [healthFilter, setHealthFilter] = useState<RepoHealth | "all">("all");
   const [sortField, setSortField] = useState<SortField>("starred_at");
   const [languageFilter, setLanguageFilter] = useState("");
+  const { t } = useLanguage();
 
   // Available languages (sorted by frequency)
   const languages = useMemo(() => {
@@ -78,7 +80,7 @@ export function RepoList({ repos }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">
-          Repositories
+          {t.repos.title}
           <span className="ml-2 text-sm font-normal text-[var(--color-text-muted)]">
             {filtered.length}
             {filtered.length !== repos.length && ` / ${repos.length}`}
@@ -100,8 +102,8 @@ export function RepoList({ repos }: Props) {
 
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-[var(--color-text-muted)]">
-          <p className="text-lg">No repos match your filters</p>
-          <p className="text-sm mt-1">Try adjusting your search or filters</p>
+          <p className="text-lg">{t.repos.noMatch}</p>
+          <p className="text-sm mt-1">{t.repos.tryAdjusting}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

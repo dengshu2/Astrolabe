@@ -1,6 +1,7 @@
 import { Search, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { RepoHealth, SortField } from "@/types/github";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   search: string;
@@ -14,21 +15,6 @@ interface Props {
   languages: string[];
 }
 
-const healthOptions: { value: RepoHealth | "all"; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "active", label: "Active" },
-  { value: "stale", label: "Stale" },
-  { value: "abandoned", label: "Abandoned" },
-  { value: "archived", label: "Archived" },
-];
-
-const sortOptions: { value: SortField; label: string }[] = [
-  { value: "starred_at", label: "Recently starred" },
-  { value: "pushed_at", label: "Recently updated" },
-  { value: "stargazers_count", label: "Most stars" },
-  { value: "name", label: "Name" },
-];
-
 export function RepoFilters({
   search,
   onSearchChange,
@@ -40,6 +26,23 @@ export function RepoFilters({
   onLanguageFilterChange,
   languages,
 }: Props) {
+  const { t } = useLanguage();
+
+  const healthOptions: { value: RepoHealth | "all"; label: string }[] = [
+    { value: "all", label: t.filters.all },
+    { value: "active", label: t.filters.active },
+    { value: "stale", label: t.filters.stale },
+    { value: "abandoned", label: t.filters.abandoned },
+    { value: "archived", label: t.filters.archived },
+  ];
+
+  const sortOptions: { value: SortField; label: string }[] = [
+    { value: "starred_at", label: t.filters.sortRecentlyStarred },
+    { value: "pushed_at", label: t.filters.sortRecentlyUpdated },
+    { value: "stargazers_count", label: t.filters.sortMostStars },
+    { value: "name", label: t.filters.sortName },
+  ];
+
   return (
     <div className="space-y-3">
       {/* Search bar */}
@@ -47,7 +50,7 @@ export function RepoFilters({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
         <input
           type="text"
-          placeholder="Search repos..."
+          placeholder={t.repos.searchPlaceholder}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full pl-9 pr-4 py-2 text-sm bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/30"
@@ -96,7 +99,7 @@ export function RepoFilters({
             onChange={(e) => onLanguageFilterChange(e.target.value)}
             className="text-xs bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg px-2 py-1.5 text-[var(--color-text-secondary)] focus:outline-none cursor-pointer"
           >
-            <option value="">All languages</option>
+            <option value="">{t.filters.allLanguages}</option>
             {languages.map((lang) => (
               <option key={lang} value={lang}>
                 {lang}

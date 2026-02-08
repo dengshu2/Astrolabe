@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Compass, Search, Github } from "lucide-react";
 import { TokenSettings } from "./TokenSettings";
+import { LanguageSwitch } from "./LanguageSwitch";
+import { useLanguage } from "@/i18n";
 
 interface Props {
   username?: string;
@@ -10,6 +12,7 @@ interface Props {
 
 export function Header({ username, onNavigate, onGoHome }: Props) {
   const [searchInput, setSearchInput] = useState("");
+  const { t } = useLanguage();
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -41,7 +44,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search another user..."
+                placeholder={t.header.searchPlaceholder}
                 className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] transition-colors"
               />
             </div>
@@ -50,6 +53,9 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
 
         {/* Right side actions */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Language switch */}
+          <LanguageSwitch />
+
           {/* Token settings */}
           <div className="relative">
             <TokenSettings />
@@ -61,7 +67,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"
-            title="GitHub"
+            title={t.header.github}
           >
             <Github className="w-5 h-5" />
           </a>

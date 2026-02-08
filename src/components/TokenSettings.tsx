@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Settings, X, Key, Check, AlertCircle, ExternalLink } from "lucide-react";
 import { getStoredToken, saveToken, removeToken } from "@/lib/token";
+import { useLanguage } from "@/i18n";
 
 interface Props {
     onTokenChange?: () => void;
@@ -11,6 +12,7 @@ export function TokenSettings({ onTokenChange }: Props) {
     const [token, setToken] = useState("");
     const [hasToken, setHasToken] = useState(false);
     const [showToken, setShowToken] = useState(false);
+    const { t } = useLanguage();
 
     useEffect(() => {
         const stored = getStoredToken();
@@ -44,7 +46,7 @@ export function TokenSettings({ onTokenChange }: Props) {
             <button
                 onClick={() => setIsOpen(true)}
                 className="p-2 rounded-lg hover:bg-[var(--color-surface-raised)] transition-colors"
-                title="API Settings"
+                title={t.header.apiSettings}
             >
                 <Settings className="w-5 h-5 text-[var(--color-text-muted)]" />
                 {hasToken && (
@@ -78,10 +80,10 @@ export function TokenSettings({ onTokenChange }: Props) {
                             </div>
                             <div>
                                 <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                                    GitHub Token
+                                    {t.token.title}
                                 </h2>
                                 <p className="text-xs text-[var(--color-text-muted)]">
-                                    可选配置，用于提高 API 限额
+                                    {t.token.subtitle}
                                 </p>
                             </div>
                         </div>
@@ -89,19 +91,19 @@ export function TokenSettings({ onTokenChange }: Props) {
                         {/* Status */}
                         <div
                             className={`flex items-center gap-2 p-3 rounded-lg mb-4 ${hasToken
-                                    ? "bg-green-500/10 text-green-400"
-                                    : "bg-yellow-500/10 text-yellow-400"
+                                ? "bg-green-500/10 text-green-400"
+                                : "bg-yellow-500/10 text-yellow-400"
                                 }`}
                         >
                             {hasToken ? (
                                 <>
                                     <Check className="w-4 h-4" />
-                                    <span className="text-sm">已配置 Token (5,000 次/小时)</span>
+                                    <span className="text-sm">{t.token.configured}</span>
                                 </>
                             ) : (
                                 <>
                                     <AlertCircle className="w-4 h-4" />
-                                    <span className="text-sm">未配置 Token (60 次/小时)</span>
+                                    <span className="text-sm">{t.token.notConfigured}</span>
                                 </>
                             )}
                         </div>
@@ -110,14 +112,14 @@ export function TokenSettings({ onTokenChange }: Props) {
                         <form onSubmit={handleSave} className="space-y-4">
                             <div>
                                 <label className="block text-sm text-[var(--color-text-secondary)] mb-2">
-                                    Personal Access Token
+                                    {t.token.label}
                                 </label>
                                 <div className="relative">
                                     <input
                                         type={showToken ? "text" : "password"}
                                         value={token}
                                         onChange={(e) => setToken(e.target.value)}
-                                        placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                                        placeholder={t.token.placeholder}
                                         className="w-full px-4 py-2.5 pr-20 rounded-lg bg-[var(--color-surface-overlay)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)] text-sm font-mono transition-colors"
                                     />
                                     <button
@@ -125,20 +127,20 @@ export function TokenSettings({ onTokenChange }: Props) {
                                         onClick={() => setShowToken(!showToken)}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
                                     >
-                                        {showToken ? "隐藏" : "显示"}
+                                        {showToken ? t.common.hide : t.common.show}
                                     </button>
                                 </div>
                             </div>
 
                             <div className="text-xs text-[var(--color-text-muted)] space-y-1">
-                                <p>Token 仅存储在浏览器本地，不会上传到任何服务器。</p>
+                                <p>{t.token.securityNote}</p>
                                 <a
                                     href="https://github.com/settings/tokens/new?description=Astrolabe&scopes="
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
                                 >
-                                    创建新的 Token（无需任何权限）
+                                    {t.token.createToken}
                                     <ExternalLink className="w-3 h-3" />
                                 </a>
                             </div>
@@ -150,7 +152,7 @@ export function TokenSettings({ onTokenChange }: Props) {
                                         onClick={handleRemove}
                                         className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm font-medium hover:bg-[var(--color-surface-overlay)] transition-colors"
                                     >
-                                        移除 Token
+                                        {t.token.removeToken}
                                     </button>
                                 )}
                                 <button
@@ -158,7 +160,7 @@ export function TokenSettings({ onTokenChange }: Props) {
                                     disabled={!token.trim()}
                                     className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--color-brand)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
                                 >
-                                    保存
+                                    {t.common.save}
                                 </button>
                             </div>
                         </form>
