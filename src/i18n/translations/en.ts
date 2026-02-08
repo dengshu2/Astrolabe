@@ -23,9 +23,9 @@ export interface Translations {
         inputPlaceholder: string;
         exploreButton: string;
         hint: string;
+        suggestedUsers: string;
         features: {
             visualInsights: { title: string; description: string };
-            quickCleanup: { title: string; description: string };
             zeroFriction: { title: string; description: string };
         };
     };
@@ -118,14 +118,11 @@ export const en: Translations = {
         inputPlaceholder: "Enter a GitHub username...",
         exploreButton: "Explore",
         hint: "Try it with any public GitHub username — no sign-in needed",
+        suggestedUsers: "Try exploring",
         features: {
             visualInsights: {
                 title: "Visual Insights",
                 description: "See stars by language, timeline, and health at a glance.",
-            },
-            quickCleanup: {
-                title: "Quick Cleanup",
-                description: "Find stale and abandoned repos. Unstar them in one click.",
             },
             zeroFriction: {
                 title: "Zero Friction",

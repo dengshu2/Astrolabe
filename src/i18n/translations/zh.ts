@@ -31,14 +31,11 @@ export const zh: Translations = {
         inputPlaceholder: "输入 GitHub 用户名...",
         exploreButton: "探索",
         hint: "输入任意公开的 GitHub 用户名即可使用，无需登录",
+        suggestedUsers: "试试探索",
         features: {
             visualInsights: {
                 title: "可视化洞察",
                 description: "一目了然地查看语言分布、时间线和项目健康状态。",
-            },
-            quickCleanup: {
-                title: "快速清理",
-                description: "发现过时和废弃的仓库，一键取消收藏。",
             },
             zeroFriction: {
                 title: "零门槛",

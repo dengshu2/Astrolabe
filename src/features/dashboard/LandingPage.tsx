@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Compass, BarChart3, StarOff, Zap, Search } from "lucide-react";
+import { Compass, BarChart3, Zap, Search, Users } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
 interface Props {
@@ -17,15 +17,20 @@ export function LandingPage({ onSubmit }: Props) {
       description: t.landing.features.visualInsights.description,
     },
     {
-      icon: StarOff,
-      title: t.landing.features.quickCleanup.title,
-      description: t.landing.features.quickCleanup.description,
-    },
-    {
       icon: Zap,
       title: t.landing.features.zeroFriction.title,
       description: t.landing.features.zeroFriction.description,
     },
+  ];
+
+  // 推荐的活跃 GitHub 用户
+  const suggestedUsers = [
+    { username: "torvalds", label: "Linus Torvalds" },
+    { username: "yyx990803", label: "Evan You" },
+    { username: "gaearon", label: "Dan Abramov" },
+    { username: "ruanyf", label: "阮一峰" },
+    { username: "antfu", label: "Anthony Fu" },
+    { username: "sindresorhus", label: "Sindre Sorhus" },
   ];
 
   const handleSubmit = (e: FormEvent) => {
@@ -75,10 +80,31 @@ export function LandingPage({ onSubmit }: Props) {
         <p className="text-xs text-[var(--color-text-muted)] mt-3">
           {t.landing.hint}
         </p>
+
+        {/* 推荐用户 */}
+        <div className="mt-6">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Users className="w-4 h-4 text-[var(--color-text-muted)]" />
+            <span className="text-sm text-[var(--color-text-muted)]">
+              {t.landing.suggestedUsers}
+            </span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            {suggestedUsers.map(({ username, label }) => (
+              <button
+                key={username}
+                onClick={() => onSubmit(username)}
+                className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-colors"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Feature cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full">
         {features.map(({ icon: Icon, title, description }) => (
           <div
             key={title}
