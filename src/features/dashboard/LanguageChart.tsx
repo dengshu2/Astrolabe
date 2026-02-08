@@ -6,21 +6,8 @@ interface Props {
 }
 
 export function LanguageChart({ data }: Props) {
-  // Show top 10, group rest as "Other"
-  const top = data.slice(0, 10);
-  const rest = data.slice(10);
-  const chartData =
-    rest.length > 0
-      ? [
-          ...top,
-          {
-            language: "Other",
-            count: rest.reduce((s, d) => s + d.count, 0),
-            percentage: rest.reduce((s, d) => s + d.percentage, 0),
-            color: "#8b949e",
-          },
-        ]
-      : top;
+  // Data is already processed in useStarStats hook (top 10 + "Other")
+  const chartData = data;
 
   return (
     <div className="bg-[var(--color-surface-raised)] rounded-xl border border-[var(--color-border)] p-5">
@@ -47,18 +34,41 @@ export function LanguageChart({ data }: Props) {
                 ))}
               </Pie>
               <Tooltip
-                contentStyle={{
-                  backgroundColor: "var(--color-surface-overlay)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "8px",
-                  color: "var(--color-text-primary)",
-                  fontSize: "12px",
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length > 0) {
+                    const data = payload[0].payload as LanguageStat;
+                    return (
+                      <div
+                        style={{
+                          backgroundColor: "var(--color-surface-overlay)",
+                          border: "1px solid var(--color-border)",
+                          borderRadius: "8px",
+                          padding: "8px 12px",
+                          fontSize: "12px",
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: data.color }}
+                          />
+                          <span style={{ color: "var(--color-text-primary)" }}>
+                            {data.language}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            color: "var(--color-text-muted)",
+                            marginTop: "4px",
+                          }}
+                        >
+                          {data.count} repos ({data.percentage}%)
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter={((value: number, name: string) => [
-                  `${value} repos`,
-                  name,
-                ]) as any}
               />
             </PieChart>
           </ResponsiveContainer>

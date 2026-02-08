@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { STARS_PER_PAGE } from "@/lib/constants";
 import type { StarredRepo, FetchProgress } from "@/types/github";
+import { getStoredToken } from "@/lib/token";
 
 interface StarResponse {
   starred_at: string;
@@ -11,13 +12,15 @@ interface StarResponse {
  * Fetch ALL starred repos for a given username.
  * Uses the PUBLIC endpoint — no authentication needed.
  * The star+json Accept header gives us starred_at timestamps.
+ * If a token is stored, it will be used to increase rate limits.
  */
 export async function fetchAllStars(
   username: string,
   onProgress?: (progress: FetchProgress) => void,
   signal?: AbortSignal
 ): Promise<StarredRepo[]> {
-  const octokit = new Octokit();
+  const token = getStoredToken();
+  const octokit = new Octokit(token ? { auth: token } : undefined);
   const allRepos: StarredRepo[] = [];
   let page = 1;
   let hasMore = true;

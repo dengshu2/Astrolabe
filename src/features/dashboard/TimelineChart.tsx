@@ -16,9 +16,14 @@ interface Props {
 export function TimelineChart({ data }: Props) {
   return (
     <div className="bg-[var(--color-surface-raised)] rounded-xl border border-[var(--color-border)] p-5">
-      <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-4">
-        Star Timeline
-      </h3>
+      <div className="mb-4">
+        <h3 className="text-sm font-medium text-[var(--color-text-secondary)]">
+          Star Timeline
+        </h3>
+        <p className="text-xs text-[var(--color-text-muted)] mt-1">
+          按每月 star 数量统计，展示累计 star 趋势
+        </p>
+      </div>
       <div className="h-52">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>

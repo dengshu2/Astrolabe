@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Compass, Search, Github } from "lucide-react";
+import { TokenSettings } from "./TokenSettings";
 
 interface Props {
   username?: string;
@@ -47,16 +48,24 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
           </form>
         )}
 
-        {/* GitHub link */}
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="shrink-0 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"
-          title="GitHub"
-        >
-          <Github className="w-5 h-5" />
-        </a>
+        {/* Right side actions */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Token settings */}
+          <div className="relative">
+            <TokenSettings />
+          </div>
+
+          {/* GitHub link */}
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"
+            title="GitHub"
+          >
+            <Github className="w-5 h-5" />
+          </a>
+        </div>
       </div>
     </header>
   );

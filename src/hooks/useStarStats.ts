@@ -16,7 +16,7 @@ export function useStarStats(repos: StarredRepo[]) {
       map.set(lang, (map.get(lang) ?? 0) + 1);
     }
     const total = repos.length || 1;
-    return Array.from(map.entries())
+    const allStats = Array.from(map.entries())
       .map(([language, count]) => ({
         language,
         count,
@@ -24,6 +24,40 @@ export function useStarStats(repos: StarredRepo[]) {
         color: getLanguageColor(language, LANGUAGE_COLORS),
       }))
       .sort((a, b) => b.count - a.count);
+
+    // Show top 10, group rest as "Other" (merge with existing "Other" if present)
+    if (allStats.length <= 10) {
+      return allStats;
+    }
+
+    const top10 = allStats.slice(0, 10);
+    const rest = allStats.slice(10);
+
+    // Check if "Other" is already in top 10
+    const existingOtherIndex = top10.findIndex((s) => s.language === "Other");
+    const restCount = rest.reduce((s, d) => s + d.count, 0);
+    const restPercentage = rest.reduce((s, d) => s + d.percentage, 0);
+
+    if (existingOtherIndex >= 0) {
+      // Merge rest into existing "Other"
+      top10[existingOtherIndex] = {
+        ...top10[existingOtherIndex],
+        count: top10[existingOtherIndex].count + restCount,
+        percentage: top10[existingOtherIndex].percentage + restPercentage,
+      };
+      return top10;
+    } else {
+      // Add new "Other" entry
+      return [
+        ...top10,
+        {
+          language: "Other",
+          count: restCount,
+          percentage: restPercentage,
+          color: "#8b949e",
+        },
+      ];
+    }
   }, [repos]);
 
   const timeline = useMemo<StarTimelineEntry[]>(() => {
