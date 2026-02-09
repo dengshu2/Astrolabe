@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchAllStars } from "@/api/github";
+import { getCachedStars, setCachedStars, clearCachedStars } from "@/lib/cache";
 import type { FetchProgress, StarredRepo } from "@/types/github";
 
 export function useStars(username: string) {
@@ -13,8 +14,27 @@ export function useStars(username: string) {
   const prevUsernameRef = useRef<string>("");
 
   const load = useCallback(
-    (name: string) => {
+    (name: string, forceRefresh: boolean = false) => {
       if (!name) return;
+
+      // Try cache first (unless force refresh)
+      if (!forceRefresh) {
+        const cached = getCachedStars(name);
+        if (cached) {
+          setRepos(cached);
+          setProgress({
+            loaded: cached.length,
+            total: cached.length,
+            status: "done",
+          });
+          return;
+        }
+      } else {
+        // Clear cache on force refresh
+        clearCachedStars(name);
+      }
+
+      // Abort any ongoing request
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -30,6 +50,8 @@ export function useStars(username: string) {
             total: result.length,
             status: "done",
           });
+          // Cache the result
+          setCachedStars(name, result);
         })
         .catch((err) => {
           if (err instanceof DOMException && err.name === "AbortError") return;
@@ -47,11 +69,13 @@ export function useStars(username: string) {
   useEffect(() => {
     if (username && username !== prevUsernameRef.current) {
       prevUsernameRef.current = username;
-      load(username);
+      load(username, false);
     }
   }, [username, load]);
 
-  const reload = useCallback(() => load(username), [username, load]);
+  // Force reload (bypass cache)
+  const reload = useCallback(() => load(username, true), [username, load]);
 
   return { repos, progress, reload };
 }
+

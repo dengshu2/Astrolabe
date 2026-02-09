@@ -1,6 +1,9 @@
 /** Stars per page when fetching (max GitHub allows) */
 export const STARS_PER_PAGE = 100;
 
+/** Maximum number of stars to fetch */
+export const MAX_STARS = 1000;
+
 /** Repos not pushed in this many days are "stale" */
 export const STALE_DAYS = 365;
 

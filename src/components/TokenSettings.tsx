@@ -146,11 +146,18 @@ export function TokenSettings({ onTokenChange }: Props) {
                             </div>
 
                             <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm font-medium hover:bg-[var(--color-surface-overlay)] transition-colors"
+                                >
+                                    {t.token.close}
+                                </button>
                                 {hasToken && (
                                     <button
                                         type="button"
                                         onClick={handleRemove}
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm font-medium hover:bg-[var(--color-surface-overlay)] transition-colors"
+                                        className="px-4 py-2.5 rounded-lg border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500/10 transition-colors"
                                     >
                                         {t.token.removeToken}
                                     </button>

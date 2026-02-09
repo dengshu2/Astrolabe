@@ -32,7 +32,7 @@ function getInitialLanguage(): Language {
     if (browserLang.startsWith("zh")) {
         return "zh";
     }
-    return "en";
+    return "zh";
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

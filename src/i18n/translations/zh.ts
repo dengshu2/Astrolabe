@@ -75,6 +75,9 @@ export const zh: Translations = {
         noMatch: "没有匹配的仓库",
         tryAdjusting: "尝试调整搜索条件或筛选器",
         openOnGithub: "在 GitHub 打开",
+        export: "导出",
+        exportJSON: "导出 JSON",
+        exportCSV: "导出 CSV",
     },
 
     // Filters
@@ -102,6 +105,7 @@ export const zh: Translations = {
         securityNote: "Token 仅存储在浏览器本地，不会上传到任何服务器。",
         createToken: "创建新的 Token（无需任何权限）",
         removeToken: "移除 Token",
+        close: "关闭",
     },
 
     // Time ago

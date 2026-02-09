@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { STARS_PER_PAGE } from "@/lib/constants";
+import { STARS_PER_PAGE, MAX_STARS } from "@/lib/constants";
 import type { StarredRepo, FetchProgress } from "@/types/github";
 import { getStoredToken } from "@/lib/token";
 
@@ -9,15 +9,17 @@ interface StarResponse {
 }
 
 /**
- * Fetch ALL starred repos for a given username.
+ * Fetch starred repos for a given username.
  * Uses the PUBLIC endpoint — no authentication needed.
  * The star+json Accept header gives us starred_at timestamps.
  * If a token is stored, it will be used to increase rate limits.
+ * @param maxCount Maximum number of stars to fetch (default: MAX_STARS)
  */
 export async function fetchAllStars(
   username: string,
   onProgress?: (progress: FetchProgress) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  maxCount: number = MAX_STARS
 ): Promise<StarredRepo[]> {
   const token = getStoredToken();
   const octokit = new Octokit(token ? { auth: token } : undefined);
@@ -27,7 +29,7 @@ export async function fetchAllStars(
 
   onProgress?.({ loaded: 0, total: null, status: "loading" });
 
-  while (hasMore) {
+  while (hasMore && allRepos.length < maxCount) {
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
     const response = await octokit.request("GET /users/{username}/starred", {
@@ -52,12 +54,12 @@ export async function fetchAllStars(
     const linkHeader = response.headers.link ?? "";
     const lastMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
     const total = lastMatch
-      ? parseInt(lastMatch[1]) * STARS_PER_PAGE
+      ? Math.min(parseInt(lastMatch[1]) * STARS_PER_PAGE, maxCount)
       : null;
 
     onProgress?.({
-      loaded: allRepos.length,
-      total: hasMore ? total : allRepos.length,
+      loaded: Math.min(allRepos.length, maxCount),
+      total: hasMore ? total : Math.min(allRepos.length, maxCount),
       status: "loading",
     });
 
@@ -65,11 +67,14 @@ export async function fetchAllStars(
     page++;
   }
 
+  // Trim to maxCount if we fetched more
+  const result = allRepos.slice(0, maxCount);
+
   onProgress?.({
-    loaded: allRepos.length,
-    total: allRepos.length,
+    loaded: result.length,
+    total: result.length,
     status: "done",
   });
 
-  return allRepos;
+  return result;
 }

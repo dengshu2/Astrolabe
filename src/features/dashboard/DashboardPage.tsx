@@ -104,7 +104,7 @@ export function DashboardPage({ username }: Props) {
       />
 
       {/* Repo list with filters */}
-      <RepoList repos={repos} />
+      <RepoList repos={repos} username={username} />
     </div>
   );
 }

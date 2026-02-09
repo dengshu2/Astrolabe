@@ -53,6 +53,9 @@ export interface Translations {
         noMatch: string;
         tryAdjusting: string;
         openOnGithub: string;
+        export: string;
+        exportJSON: string;
+        exportCSV: string;
     };
     filters: {
         all: string;
@@ -76,6 +79,7 @@ export interface Translations {
         securityNote: string;
         createToken: string;
         removeToken: string;
+        close: string;
     };
     timeAgo: {
         justNow: string;
@@ -176,6 +180,9 @@ export const en: Translations = {
         noMatch: "No repos match your filters",
         tryAdjusting: "Try adjusting your search or filters",
         openOnGithub: "Open on GitHub",
+        export: "Export",
+        exportJSON: "Export JSON",
+        exportCSV: "Export CSV",
     },
 
     // Filters
@@ -203,6 +210,7 @@ export const en: Translations = {
         securityNote: "Token is stored locally in browser, never uploaded to any server.",
         createToken: "Create a new Token (no permissions required)",
         removeToken: "Remove Token",
+        close: "Close",
     },
 
     // Time ago

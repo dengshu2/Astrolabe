@@ -63,7 +63,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
 
           {/* GitHub link */}
           <a
-            href="https://github.com"
+            href="https://github.com/dengshu2/Astrolabe"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"

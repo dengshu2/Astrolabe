@@ -1,19 +1,23 @@
 import { useMemo, useState } from "react";
+import { Download, ChevronDown } from "lucide-react";
 import type { RepoHealth, SortField, StarredRepo } from "@/types/github";
 import { classifyHealth } from "@/lib/utils";
+import { exportToJSON, exportToCSV } from "@/lib/export";
 import { RepoCard } from "./RepoCard";
 import { RepoFilters } from "./RepoFilters";
 import { useLanguage } from "@/i18n";
 
 interface Props {
   repos: StarredRepo[];
+  username?: string;
 }
 
-export function RepoList({ repos }: Props) {
+export function RepoList({ repos, username }: Props) {
   const [search, setSearch] = useState("");
   const [healthFilter, setHealthFilter] = useState<RepoHealth | "all">("all");
   const [sortField, setSortField] = useState<SortField>("starred_at");
   const [languageFilter, setLanguageFilter] = useState("");
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const { t } = useLanguage();
 
   // Available languages (sorted by frequency)
@@ -76,6 +80,16 @@ export function RepoList({ repos }: Props) {
     return result;
   }, [repos, search, healthFilter, sortField, languageFilter]);
 
+  const handleExportJSON = () => {
+    exportToJSON(filtered, username ? `${username}-stars` : "stars");
+    setShowExportMenu(false);
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(filtered, username ? `${username}-stars` : "stars");
+    setShowExportMenu(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -86,6 +100,41 @@ export function RepoList({ repos }: Props) {
             {filtered.length !== repos.length && ` / ${repos.length}`}
           </span>
         </h2>
+
+        {/* Export dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-surface-overlay)] transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {t.repos.export}
+            <ChevronDown className="w-3 h-3" />
+          </button>
+
+          {showExportMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowExportMenu(false)}
+              />
+              <div className="absolute right-0 mt-1 w-36 bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg shadow-lg z-20 overflow-hidden">
+                <button
+                  onClick={handleExportJSON}
+                  className="w-full px-3 py-2 text-left text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-overlay)] transition-colors"
+                >
+                  {t.repos.exportJSON}
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="w-full px-3 py-2 text-left text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-overlay)] transition-colors"
+                >
+                  {t.repos.exportCSV}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <RepoFilters
