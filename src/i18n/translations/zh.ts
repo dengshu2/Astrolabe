@@ -113,4 +113,20 @@ export const zh: Translations = {
         monthsAgo: "个月前",
         yearsAgo: "年前",
     },
+
+    // Prompts
+    prompts: {
+        title: "AI 提示词",
+        subtitle: "复制后配合 AI 助手使用",
+        copy: "复制",
+        copied: "已复制!",
+        userProfile: {
+            title: "用户画像分析",
+            description: "基于最近 {count} 个仓库分析技术画像",
+        },
+        listCategory: {
+            title: "GitHub Lists 整理",
+            description: "为 {count} 个仓库生成分类方案",
+        },
+    },
 };

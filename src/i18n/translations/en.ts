@@ -85,6 +85,20 @@ export interface Translations {
         monthsAgo: string;
         yearsAgo: string;
     };
+    prompts: {
+        title: string;
+        subtitle: string;
+        copy: string;
+        copied: string;
+        userProfile: {
+            title: string;
+            description: string;
+        };
+        listCategory: {
+            title: string;
+            description: string;
+        };
+    };
 }
 
 export const en: Translations = {
@@ -199,5 +213,21 @@ export const en: Translations = {
         daysAgo: "d ago",
         monthsAgo: "mo ago",
         yearsAgo: "y ago",
+    },
+
+    // Prompts
+    prompts: {
+        title: "AI Prompts",
+        subtitle: "Copy and use with your favorite AI assistant",
+        copy: "Copy",
+        copied: "Copied!",
+        userProfile: {
+            title: "User Profile Analysis",
+            description: "Analyze tech profile based on recent {count} repos",
+        },
+        listCategory: {
+            title: "GitHub Lists Organizer",
+            description: "Generate list categories for {count} repos",
+        },
     },
 };

@@ -5,9 +5,11 @@ import { HealthSummary } from "./HealthSummary";
 import { LanguageChart } from "./LanguageChart";
 import { TimelineChart } from "./TimelineChart";
 import { RepoList } from "@/features/repos/RepoList";
+import { PromptSection } from "@/features/prompts/PromptSection";
 import { RefreshCw, AlertCircle, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/i18n";
+
 
 interface Props {
   username: string;
@@ -93,8 +95,17 @@ export function DashboardPage({ username }: Props) {
         <TimelineChart data={timeline} />
       </div>
 
+      {/* AI Prompts */}
+      <PromptSection
+        username={username}
+        repos={repos}
+        languageStats={languageStats}
+        healthSummary={healthSummary}
+      />
+
       {/* Repo list with filters */}
       <RepoList repos={repos} />
     </div>
   );
 }
+
