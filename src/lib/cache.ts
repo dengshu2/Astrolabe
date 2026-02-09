@@ -1,7 +1,7 @@
 import type { StarredRepo } from "@/types/github";
 
 const CACHE_KEY_PREFIX = "astrolabe-stars-";
-const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes (extended for better performance)
 
 interface CacheEntry {
     data: StarredRepo[];
@@ -10,11 +10,12 @@ interface CacheEntry {
 
 /**
  * Get cached stars for a user
+ * Uses localStorage for persistent caching across sessions
  */
 export function getCachedStars(username: string): StarredRepo[] | null {
     try {
         const key = CACHE_KEY_PREFIX + username.toLowerCase();
-        const cached = sessionStorage.getItem(key);
+        const cached = localStorage.getItem(key);
         if (!cached) return null;
 
         const entry: CacheEntry = JSON.parse(cached);
@@ -22,7 +23,7 @@ export function getCachedStars(username: string): StarredRepo[] | null {
 
         // Check if cache is expired
         if (now - entry.timestamp > CACHE_EXPIRY_MS) {
-            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
             return null;
         }
 
