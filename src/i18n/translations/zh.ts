@@ -41,6 +41,14 @@ export const zh: Translations = {
                 title: "零门槛",
                 description: "输入任意 GitHub 用户名，无需登录，即刻获取结果。",
             },
+            dataExport: {
+                title: "数据导出",
+                description: "支持导出 JSON 或 CSV 格式，方便备份或二次分析。",
+            },
+            aiPrompts: {
+                title: "AI 提示词生成",
+                description: "自动生成 GitHub Lists 分类建议和用户技术画像提示词。",
+            },
         },
     },
 

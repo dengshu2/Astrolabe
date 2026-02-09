@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Compass, BarChart3, Zap, Search, Users, ArrowRight } from "lucide-react";
+import { Compass, BarChart3, Zap, Search, Users, ArrowRight, Download, Sparkles } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
 interface Props {
@@ -24,6 +24,20 @@ export function LandingPage({ onSubmit }: Props) {
       description: t.landing.features.zeroFriction.description,
       color: "text-amber-500",
       bg: "bg-amber-50",
+    },
+    {
+      icon: Download,
+      title: t.landing.features.dataExport.title,
+      description: t.landing.features.dataExport.description,
+      color: "text-green-500",
+      bg: "bg-green-50",
+    },
+    {
+      icon: Sparkles,
+      title: t.landing.features.aiPrompts.title,
+      description: t.landing.features.aiPrompts.description,
+      color: "text-purple-500",
+      bg: "bg-purple-50",
     },
   ];
 

@@ -27,6 +27,8 @@ export interface Translations {
         features: {
             visualInsights: { title: string; description: string };
             zeroFriction: { title: string; description: string };
+            dataExport: { title: string; description: string };
+            aiPrompts: { title: string; description: string };
         };
     };
     dashboard: {
@@ -146,6 +148,14 @@ export const en: Translations = {
             zeroFriction: {
                 title: "Zero Friction",
                 description: "Enter any GitHub username. No login, no setup, instant results.",
+            },
+            dataExport: {
+                title: "Data Export",
+                description: "Export your starred repositories to JSON or CSV for backup or further analysis.",
+            },
+            aiPrompts: {
+                title: "AI-Powered Prompts",
+                description: "Generate prompts for GitHub Lists categorization and user persona analysis.",
             },
         },
     },
