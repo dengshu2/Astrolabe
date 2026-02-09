@@ -13,7 +13,7 @@ export interface Translations {
     header: {
         searchPlaceholder: string;
         github: string;
-        apiSettings: string;
+
     };
     landing: {
         heroTitle: string;
@@ -72,18 +72,7 @@ export interface Translations {
         sortMostStars: string;
         sortName: string;
     };
-    token: {
-        title: string;
-        subtitle: string;
-        configured: string;
-        notConfigured: string;
-        label: string;
-        placeholder: string;
-        securityNote: string;
-        createToken: string;
-        removeToken: string;
-        close: string;
-    };
+
     timeAgo: {
         justNow: string;
         minutesAgo: string;
@@ -126,7 +115,7 @@ export const en: Translations = {
     header: {
         searchPlaceholder: "Search another user...",
         github: "GitHub",
-        apiSettings: "API Settings",
+
     },
 
     // Landing Page
@@ -211,19 +200,7 @@ export const en: Translations = {
         sortName: "Name",
     },
 
-    // Token Settings
-    token: {
-        title: "GitHub Token",
-        subtitle: "Optional, used to increase API rate limit",
-        configured: "Token configured (5,000 requests/hour)",
-        notConfigured: "No token (60 requests/hour)",
-        label: "Personal Access Token",
-        placeholder: "ghp_xxxxxxxxxxxxxxxxxxxx",
-        securityNote: "Token is stored locally in browser, never uploaded to any server.",
-        createToken: "Create a new Token (no permissions required)",
-        removeToken: "Remove Token",
-        close: "Close",
-    },
+
 
     // Time ago
     timeAgo: {

@@ -18,7 +18,7 @@ export const zh: Translations = {
     header: {
         searchPlaceholder: "搜索其他用户...",
         github: "GitHub",
-        apiSettings: "API 设置",
+
     },
 
     // Landing Page
@@ -103,19 +103,7 @@ export const zh: Translations = {
         sortName: "按名称",
     },
 
-    // Token Settings
-    token: {
-        title: "GitHub Token",
-        subtitle: "可选配置，用于提高 API 限额",
-        configured: "已配置 Token (5,000 次/小时)",
-        notConfigured: "未配置 Token (60 次/小时)",
-        label: "Personal Access Token",
-        placeholder: "ghp_xxxxxxxxxxxxxxxxxxxx",
-        securityNote: "Token 仅存储在浏览器本地，不会上传到任何服务器。",
-        createToken: "创建新的 Token（无需任何权限）",
-        removeToken: "移除 Token",
-        close: "关闭",
-    },
+
 
     // Time ago
     timeAgo: {

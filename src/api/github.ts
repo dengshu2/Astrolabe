@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { STARS_PER_PAGE, MAX_STARS } from "@/lib/constants";
 import type { StarredRepo, FetchProgress } from "@/types/github";
-import { getStoredToken } from "@/lib/token";
+
 
 interface StarResponse {
   starred_at: string;
@@ -61,8 +61,8 @@ export async function fetchAllStars(
   signal?: AbortSignal,
   maxCount: number = MAX_STARS
 ): Promise<StarredRepo[]> {
-  const token = getStoredToken();
-  const octokit = new Octokit(token ? { auth: token } : undefined);
+
+  const octokit = new Octokit();
 
   onProgress?.({ loaded: 0, total: null, status: "loading" });
 

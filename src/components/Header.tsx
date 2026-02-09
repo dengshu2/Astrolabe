@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Compass, Search, Github } from "lucide-react";
-import { TokenSettings } from "./TokenSettings";
+
 import { LanguageSwitch } from "./LanguageSwitch";
 import { useLanguage } from "@/i18n";
 
@@ -62,10 +62,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
           {/* Language switch */}
           <LanguageSwitch />
 
-          {/* Token settings */}
-          <div className="relative">
-            <TokenSettings />
-          </div>
+
 
           {/* GitHub link */}
           <a
