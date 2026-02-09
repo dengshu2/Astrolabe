@@ -12,12 +12,12 @@ export function LanguageChart({ data }: Props) {
   const chartData = data;
 
   return (
-    <div className="bg-[var(--color-surface-raised)] rounded-xl border border-[var(--color-border)] p-5">
-      <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-4">
+    <div className="h-full flex flex-col">
+      <h3 className="text-base font-semibold text-gray-900 mb-6">
         {t.charts.languages}
       </h3>
-      <div className="flex items-center gap-6">
-        <div className="w-40 h-40 shrink-0">
+      <div className="flex items-center gap-6 flex-1">
+        <div className="w-48 h-48 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -26,10 +26,11 @@ export function LanguageChart({ data }: Props) {
                 nameKey="language"
                 cx="50%"
                 cy="50%"
-                innerRadius={35}
-                outerRadius={65}
-                paddingAngle={2}
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={4}
                 strokeWidth={0}
+                cornerRadius={4}
               >
                 {chartData.map((entry) => (
                   <Cell key={entry.language} fill={entry.color} />
@@ -40,30 +41,17 @@ export function LanguageChart({ data }: Props) {
                   if (active && payload && payload.length > 0) {
                     const data = payload[0].payload as LanguageStat;
                     return (
-                      <div
-                        style={{
-                          backgroundColor: "var(--color-surface-overlay)",
-                          border: "1px solid var(--color-border)",
-                          borderRadius: "8px",
-                          padding: "8px 12px",
-                          fontSize: "12px",
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
+                      <div className="bg-white/90 backdrop-blur border border-gray-100 rounded-xl shadow-xl p-3 text-xs">
+                        <div className="flex items-center gap-2 mb-1">
                           <span
-                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            className="w-2 h-2 rounded-full shrink-0"
                             style={{ backgroundColor: data.color }}
                           />
-                          <span style={{ color: "var(--color-text-primary)" }}>
+                          <span className="font-semibold text-gray-900">
                             {data.language}
                           </span>
                         </div>
-                        <div
-                          style={{
-                            color: "var(--color-text-muted)",
-                            marginTop: "4px",
-                          }}
-                        >
+                        <div className="text-gray-500 pl-4">
                           {data.count} {t.common.repos} ({data.percentage}%)
                         </div>
                       </div>
@@ -75,18 +63,18 @@ export function LanguageChart({ data }: Props) {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <ul className="flex-1 space-y-1.5 text-sm overflow-auto max-h-40">
+        <ul className="flex-1 space-y-2 text-sm overflow-auto max-h-56 pr-2 custom-scrollbar">
           {chartData.map((item) => (
-            <li key={item.language} className="flex items-center gap-2">
+            <li key={item.language} className="flex items-center gap-3">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: item.color }}
               />
-              <span className="text-[var(--color-text-primary)] truncate">
+              <span className="text-gray-700 font-medium truncate flex-1">
                 {item.language}
               </span>
-              <span className="ml-auto text-[var(--color-text-muted)] tabular-nums">
-                {item.count}
+              <span className="text-gray-400 tabular-nums text-xs">
+                {item.percentage}%
               </span>
             </li>
           ))}

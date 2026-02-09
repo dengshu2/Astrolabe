@@ -58,20 +58,24 @@ export function PromptSection({
     }, [username, sortedRepos]);
 
     return (
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4">
+        <div className="h-full">
             {/* Section Header */}
             <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-[var(--color-brand)]" />
-                <h2 className="font-semibold text-[var(--color-text-primary)]">
-                    {t.prompts.title}
-                </h2>
-                <span className="text-xs text-[var(--color-text-muted)]">
-                    {t.prompts.subtitle}
-                </span>
+                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-orange-500" />
+                </div>
+                <div>
+                    <h2 className="font-semibold text-gray-900 leading-none">
+                        {t.prompts.title}
+                    </h2>
+                    <span className="text-xs text-gray-500">
+                        {t.prompts.subtitle}
+                    </span>
+                </div>
             </div>
 
             {/* Prompt Cards */}
-            <div className="space-y-3">
+            <div className="space-y-4">
                 <PromptCard
                     title={t.prompts.userProfile.title}
                     description={t.prompts.userProfile.description.replace(

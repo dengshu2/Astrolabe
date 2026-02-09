@@ -82,6 +82,7 @@ export const zh: Translations = {
 
     // Filters
     filters: {
+        filterBy: "筛选",
         all: "全部",
         active: "活跃",
         stale: "过时",

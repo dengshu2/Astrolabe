@@ -1,7 +1,7 @@
 import {
   Star,
   GitFork,
-  ExternalLink,
+
   Clock,
 } from "lucide-react";
 import type { StarredRepo } from "@/types/github";
@@ -26,10 +26,10 @@ export function RepoCard({ repo }: Props) {
   const langColor = getLanguageColor(repo.language, LANGUAGE_COLORS);
 
   const healthBadge: Record<string, { label: string; className: string }> = {
-    active: { label: t.filters.active, className: "bg-green-500/10 text-[var(--color-success)]" },
-    stale: { label: t.filters.stale, className: "bg-yellow-500/10 text-[var(--color-warning)]" },
-    abandoned: { label: t.filters.abandoned, className: "bg-red-500/10 text-[var(--color-danger)]" },
-    archived: { label: t.filters.archived, className: "bg-gray-500/10 text-[var(--color-text-muted)]" },
+    active: { label: t.filters.active, className: "bg-emerald-50 text-emerald-600 border border-emerald-100" },
+    stale: { label: t.filters.stale, className: "bg-amber-50 text-amber-600 border border-amber-100" },
+    abandoned: { label: t.filters.abandoned, className: "bg-rose-50 text-rose-600 border border-rose-100" },
+    archived: { label: t.filters.archived, className: "bg-slate-50 text-slate-500 border border-slate-100" },
   };
 
   const badge = healthBadge[health];
@@ -39,23 +39,28 @@ export function RepoCard({ repo }: Props) {
       href={repo.html_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group bg-[var(--color-surface-raised)] hover:bg-[var(--color-surface-overlay)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-brand)]/30 p-4 flex flex-col gap-3 transition-colors"
+      className="group bg-white hover:bg-gray-50 rounded-2xl border border-transparent shadow-sm hover:shadow-md hover:border-blue-100 p-5 flex flex-col gap-4 transition-all duration-300"
     >
       {/* Top row: owner + health badge */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <img
             src={repo.owner.avatar_url}
             alt={repo.owner.login}
-            className="w-5 h-5 rounded-full shrink-0"
+            className="w-8 h-8 rounded-full shrink-0 border border-gray-100"
           />
-          <span className="text-[var(--color-brand)] font-medium text-sm truncate">
-            {repo.full_name}
-          </span>
+          <div className="min-w-0">
+            <span className="text-gray-900 font-semibold text-sm truncate block group-hover:text-blue-600 transition-colors">
+              {repo.name}
+            </span>
+            <span className="text-gray-500 text-xs truncate block">
+              {repo.owner.login}
+            </span>
+          </div>
         </div>
         <span
           className={cn(
-            "shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full",
+            "shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider",
             badge.className
           )}
         >
@@ -65,40 +70,34 @@ export function RepoCard({ repo }: Props) {
 
       {/* Description */}
       {repo.description && (
-        <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2 leading-relaxed">
+        <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
           {repo.description}
         </p>
       )}
 
       {/* Meta row */}
-      <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)] mt-auto">
+      <div className="flex items-center gap-4 text-xs text-gray-400 mt-auto pt-2 border-t border-gray-50">
         {repo.language && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1.5 text-gray-600">
             <span
-              className="w-2 h-2 rounded-full"
+              className="w-2.5 h-2.5 rounded-full ring-1 ring-inset ring-black/5"
               style={{ backgroundColor: langColor }}
             />
             {repo.language}
           </span>
         )}
         <span className="flex items-center gap-1">
-          <Star className="w-3 h-3" />
+          <Star className="w-3.5 h-3.5" />
           {formatCount(repo.stargazers_count)}
         </span>
         <span className="flex items-center gap-1">
-          <GitFork className="w-3 h-3" />
+          <GitFork className="w-3.5 h-3.5" />
           {formatCount(repo.forks_count)}
         </span>
         <span className="flex items-center gap-1 ml-auto">
-          <Clock className="w-3 h-3" />
+          <Clock className="w-3.5 h-3.5" />
           {timeAgo(repo.pushed_at)}
         </span>
-      </div>
-
-      {/* Hover hint */}
-      <div className="flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-[var(--color-text-muted)]">
-        <ExternalLink className="w-3 h-3" />
-        {t.repos.openOnGithub}
       </div>
     </a>
   );

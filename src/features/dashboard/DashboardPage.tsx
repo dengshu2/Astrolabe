@@ -9,6 +9,7 @@ import { PromptSection } from "@/features/prompts/PromptSection";
 import { RefreshCw, AlertCircle, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/i18n";
+import { Card } from "@/components/ui/Card";
 
 
 interface Props {
@@ -63,24 +64,26 @@ export function DashboardPage({ username }: Props) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Stats overview */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-2xl font-bold tracking-tight">
           <a
             href={`https://github.com/${username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[var(--color-brand)] hover:underline"
+            className="text-[var(--color-text-primary)] hover:text-[var(--color-brand)] transition-colors"
           >
             {username}
           </a>
-          <span className="text-[var(--color-text-primary)]">{t.dashboard.userStars}</span>
+          <span className="text-[var(--color-text-secondary)] ml-2 font-medium bg-gray-100 px-2 py-0.5 rounded-full text-sm align-middle">
+            {t.dashboard.userStars}
+          </span>
           <span className="ml-2 text-sm font-normal text-[var(--color-text-muted)]">
             {repos.length} {t.common.repos}
           </span>
         </h2>
-        <Button variant="ghost" size="sm" onClick={reload}>
+        <Button variant="secondary" size="sm" onClick={reload} className="shadow-none border-0 bg-white hover:bg-gray-100">
           <RefreshCw className="w-4 h-4" />
           {t.common.refresh}
         </Button>
@@ -90,18 +93,24 @@ export function DashboardPage({ username }: Props) {
       <HealthSummary summary={healthSummary} />
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <LanguageChart data={languageStats} />
-        <TimelineChart data={timeline} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-1 border-0">
+          <LanguageChart data={languageStats} />
+        </Card>
+        <Card className="lg:col-span-2 border-0">
+          <TimelineChart data={timeline} />
+        </Card>
       </div>
 
       {/* AI Prompts */}
-      <PromptSection
-        username={username}
-        repos={repos}
-        languageStats={languageStats}
-        healthSummary={healthSummary}
-      />
+      <Card className="border-0">
+        <PromptSection
+          username={username}
+          repos={repos}
+          languageStats={languageStats}
+          healthSummary={healthSummary}
+        />
+      </Card>
 
       {/* Repo list with filters */}
       <RepoList repos={repos} username={username} />

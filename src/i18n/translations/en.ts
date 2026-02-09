@@ -58,6 +58,7 @@ export interface Translations {
         exportCSV: string;
     };
     filters: {
+        filterBy: string;
         all: string;
         active: string;
         stale: string;
@@ -187,6 +188,7 @@ export const en: Translations = {
 
     // Filters
     filters: {
+        filterBy: "Filter by",
         all: "All",
         active: "Active",
         stale: "Stale",
