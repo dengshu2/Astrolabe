@@ -55,4 +55,6 @@ export interface FetchProgress {
   total: number | null;
   status: "idle" | "loading" | "done" | "error";
   error?: string;
+  /** HTTP status code when status is "error" (e.g. 404, 403) */
+  errorCode?: number;
 }

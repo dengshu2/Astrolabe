@@ -35,13 +35,13 @@ export function HeroSection({ onSubmit }: Props) {
 
                 <h1 className="font-bold tracking-tight mb-6 leading-tight">
                     {t.landing.heroTitle}{" "}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-accent)]">
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-(--color-brand) to-(--color-accent)">
                         {t.landing.heroTitleHighlight}
                     </span>{" "}
                     {t.landing.heroTitleEnd}
                 </h1>
 
-                <p className="text-xl text-[var(--color-text-secondary)] mb-10 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-xl text-(--color-text-secondary) mb-10 max-w-2xl mx-auto leading-relaxed">
                     {t.landing.heroDescription}
                 </p>
 
@@ -62,7 +62,7 @@ export function HeroSection({ onSubmit }: Props) {
                         <button
                             type="submit"
                             disabled={!input.trim()}
-                            className="px-6 py-2.5 rounded-xl bg-[var(--color-brand)] text-white font-semibold hover:bg-[var(--color-brand-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
+                            className="shrink-0 whitespace-nowrap px-6 py-2.5 rounded-xl bg-(--color-brand) text-white font-semibold hover:bg-(--color-brand-dark) disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
                         >
                             {t?.landing?.exploreButton || "Explore"}
                             <ArrowRight className="w-4 h-4" />
@@ -70,7 +70,7 @@ export function HeroSection({ onSubmit }: Props) {
                     </form>
                 </div>
 
-                <p className="mt-4 text-sm text-[var(--color-text-muted)]">
+                <p className="mt-4 text-sm text-(--color-text-muted)">
                     {t.landing.hint}
                 </p>
             </div>

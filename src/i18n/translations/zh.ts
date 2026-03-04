@@ -58,6 +58,8 @@ export const zh: Translations = {
         failedToLoad: "加载失败",
         noStars: "还没有收藏任何仓库",
         userStars: " 的收藏",
+        userNotFound: "在 GitHub 上不存在",
+        rateLimited: "GitHub API 请求已达上限，请稍后再试",
     },
 
     // Health Summary

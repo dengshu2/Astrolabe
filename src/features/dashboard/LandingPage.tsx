@@ -16,7 +16,7 @@ export function LandingPage({ onSubmit }: Props) {
       <CTASection />
 
       {/* Footer - Inline for now or move to separate component */}
-      <footer className="py-8 text-center text-sm text-[var(--color-text-muted)] border-t border-gray-100">
+      <footer className="py-8 text-center text-sm text-(--color-text-muted) border-t border-gray-100">
         <p>© 2026 Astrolabe. Built with ❤️ for the open source community.</p>
       </footer>
     </main>

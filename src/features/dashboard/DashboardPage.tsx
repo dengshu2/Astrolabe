@@ -6,7 +6,7 @@ import { LanguageChart } from "./LanguageChart";
 import { TimelineChart } from "./TimelineChart";
 import { RepoList } from "@/features/repos/RepoList";
 import { PromptSection } from "@/features/prompts/PromptSection";
-import { RefreshCw, AlertCircle, User } from "lucide-react";
+import { RefreshCw, AlertCircle, User, UserX, Clock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/i18n";
 import { Card } from "@/components/ui/Card";
@@ -26,8 +26,8 @@ export function DashboardPage({ username }: Props) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-md mx-auto text-center">
-          <p className="text-sm text-[var(--color-text-muted)] mb-4">
-            {t.dashboard.loadingStars} <span className="font-medium text-[var(--color-text-primary)]">{username}</span>...
+          <p className="text-sm text-(--color-text-muted) mb-4">
+            {t.dashboard.loadingStars} <span className="font-medium text-(--color-text-primary)">{username}</span>...
           </p>
           <ProgressBar loaded={progress.loaded} total={progress.total} />
         </div>
@@ -37,11 +37,33 @@ export function DashboardPage({ username }: Props) {
 
   // Error state
   if (progress.status === "error") {
+    const is404 = progress.errorCode === 404;
+    const is403 = progress.errorCode === 403;
+
+    const ErrorIcon = is404 ? UserX : is403 ? Clock : AlertCircle;
+    const errorMessage = is404
+      ? undefined // use structured message below
+      : is403
+        ? t.dashboard.rateLimited
+        : (progress.error ?? t.dashboard.failedToLoad);
+
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center">
-        <AlertCircle className="w-10 h-10 text-[var(--color-danger)] mx-auto mb-3" />
-        <p className="text-[var(--color-text-secondary)] mb-4">
-          {progress.error ?? t.dashboard.failedToLoad}
+        <ErrorIcon
+          className={`w-10 h-10 mx-auto mb-3 ${is404
+            ? "text-(--color-text-muted)"
+            : "text-(--color-danger)"
+            }`}
+        />
+        <p className="text-(--color-text-secondary) mb-4">
+          {is404 ? (
+            <>
+              <span className="font-medium">{username}</span>{" "}
+              {t.dashboard.userNotFound}
+            </>
+          ) : (
+            errorMessage
+          )}
         </p>
         <Button variant="secondary" onClick={reload}>
           <RefreshCw className="w-4 h-4" />
@@ -55,8 +77,8 @@ export function DashboardPage({ username }: Props) {
   if (repos.length === 0 && progress.status === "done") {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center">
-        <User className="w-10 h-10 text-[var(--color-text-muted)] mx-auto mb-3" />
-        <p className="text-lg text-[var(--color-text-muted)]">
+        <User className="w-10 h-10 text-(--color-text-muted) mx-auto mb-3" />
+        <p className="text-lg text-(--color-text-muted)">
           <span className="font-medium">{username}</span> {t.dashboard.noStars}
         </p>
       </div>
@@ -72,14 +94,14 @@ export function DashboardPage({ username }: Props) {
             href={`https://github.com/${username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[var(--color-text-primary)] hover:text-[var(--color-brand)] transition-colors"
+            className="text-(--color-text-primary) hover:text-(--color-brand) transition-colors"
           >
             {username}
           </a>
-          <span className="text-[var(--color-text-secondary)] ml-2 font-medium bg-gray-100 px-2 py-0.5 rounded-full text-sm align-middle">
+          <span className="text-(--color-text-secondary) ml-2 font-medium bg-gray-100 px-2 py-0.5 rounded-full text-sm align-middle">
             {t.dashboard.userStars}
           </span>
-          <span className="ml-2 text-sm font-normal text-[var(--color-text-muted)]">
+          <span className="ml-2 text-sm font-normal text-(--color-text-muted)">
             {repos.length} {t.common.repos}
           </span>
         </h2>

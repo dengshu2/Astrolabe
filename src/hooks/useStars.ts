@@ -55,10 +55,18 @@ export function useStars(username: string) {
         })
         .catch((err) => {
           if (err instanceof DOMException && err.name === "AbortError") return;
+
+          // Extract HTTP status code from Octokit RequestError
+          const statusCode =
+            err && typeof err === "object" && "status" in err
+              ? (err as { status: number }).status
+              : undefined;
+
           setProgress((p) => ({
             ...p,
             status: "error",
             error: err instanceof Error ? err.message : "Unknown error",
+            errorCode: statusCode,
           }));
         });
     },

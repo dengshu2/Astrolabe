@@ -18,9 +18,9 @@ export function SocialProofSection({ onUserSelect }: Props) {
     ];
 
     return (
-        <div className="py-12 border-y border-gray-100 bg-[var(--color-background-alt)]">
+        <div className="py-12 border-y border-gray-100 bg-(--color-background-alt)">
             <div className="max-w-7xl mx-auto px-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-6 text-[var(--color-text-muted)]">
+                <div className="flex items-center justify-center gap-2 mb-6 text-(--color-text-muted)">
                     <Users className="w-4 h-4" />
                     <span className="text-sm font-semibold uppercase tracking-wider">
                         {t.landing.suggestedUsers}

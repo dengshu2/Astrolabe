@@ -33,7 +33,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
           className="flex items-center gap-3 shrink-0 hover:opacity-80 transition-opacity group"
         >
           <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-            <Compass className="w-6 h-6 text-[var(--color-brand)]" />
+            <Compass className="w-6 h-6 text-(--color-brand)" />
           </div>
           <div className="flex flex-col items-start">
             <span className="text-lg font-bold tracking-tight text-gray-900 leading-none">Astrolabe</span>
@@ -45,13 +45,13 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
         {username && (
           <form onSubmit={handleSearch} className="flex-1 max-w-md hidden sm:block">
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[var(--color-brand)] transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-(--color-brand) transition-colors" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={t.header.searchPlaceholder}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100/50 border-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]/20 focus:bg-white transition-all shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100/50 border-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--color-brand)/20 focus:bg-white transition-all shadow-sm"
               />
             </div>
           </form>

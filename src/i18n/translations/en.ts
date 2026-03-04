@@ -36,6 +36,8 @@ export interface Translations {
         failedToLoad: string;
         noStars: string;
         userStars: string;
+        userNotFound: string;
+        rateLimited: string;
     };
     health: {
         active: string;
@@ -155,6 +157,8 @@ export const en: Translations = {
         failedToLoad: "Failed to load stars",
         noStars: "hasn't starred any repos yet",
         userStars: "'s Stars",
+        userNotFound: "doesn't seem to exist on GitHub",
+        rateLimited: "GitHub API rate limit reached. Please wait a moment and try again",
     },
 
     // Health Summary
