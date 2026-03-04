@@ -40,10 +40,10 @@ export function FeatureSection() {
             <div className="max-w-7xl mx-auto px-4 relative z-10">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="font-bold mb-4">
-                        Everything you need to <span className="text-(--color-brand)">understand traffic</span>
+                        {t.landing.featureHeading}{" "}<span className="text-(--color-brand)">{t.landing.featureHeadingHighlight}</span>
                     </h2>
                     <p className="text-lg text-(--color-text-secondary)">
-                        Powerful features to help you grow your open source presence and understand your audience.
+                        {t.landing.featureSubheading}
                     </p>
                 </div>
 

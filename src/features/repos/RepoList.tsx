@@ -80,6 +80,23 @@ export function RepoList({ repos, username }: Props) {
     return result;
   }, [repos, search, healthFilter, sortField, languageFilter]);
 
+  // Pagination: show repos incrementally
+  const PAGE_SIZE = 30;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Reset visible count when filters change
+  const filterKey = `${search}|${healthFilter}|${sortField}|${languageFilter}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(PAGE_SIZE);
+  }
+
+  const visible = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount]
+  );
+
   const handleExportJSON = () => {
     exportToJSON(filtered, username ? `${username}-stars` : "stars");
     setShowExportMenu(false);
@@ -95,7 +112,7 @@ export function RepoList({ repos, username }: Props) {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">
           {t.repos.title}
-          <span className="ml-2 text-sm font-normal text-[var(--color-text-muted)]">
+          <span className="ml-2 text-sm font-normal text-(--color-text-muted)">
             {filtered.length}
             {filtered.length !== repos.length && ` / ${repos.length}`}
           </span>
@@ -105,7 +122,7 @@ export function RepoList({ repos, username }: Props) {
         <div className="relative">
           <button
             onClick={() => setShowExportMenu(!showExportMenu)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-surface-overlay)] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-(--color-text-secondary) bg-(--color-surface-raised) border border-(--color-border) rounded-lg hover:bg-(--color-surface-overlay) transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             {t.repos.export}
@@ -118,16 +135,16 @@ export function RepoList({ repos, username }: Props) {
                 className="fixed inset-0 z-10"
                 onClick={() => setShowExportMenu(false)}
               />
-              <div className="absolute right-0 mt-1 w-36 bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg shadow-lg z-20 overflow-hidden">
+              <div className="absolute right-0 mt-1 w-36 bg-(--color-surface-raised) border border-(--color-border) rounded-lg shadow-lg z-20 overflow-hidden">
                 <button
                   onClick={handleExportJSON}
-                  className="w-full px-3 py-2 text-left text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-overlay)] transition-colors"
+                  className="w-full px-3 py-2 text-left text-xs text-(--color-text-secondary) hover:bg-(--color-surface-overlay) transition-colors"
                 >
                   {t.repos.exportJSON}
                 </button>
                 <button
                   onClick={handleExportCSV}
-                  className="w-full px-3 py-2 text-left text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-overlay)] transition-colors"
+                  className="w-full px-3 py-2 text-left text-xs text-(--color-text-secondary) hover:bg-(--color-surface-overlay) transition-colors"
                 >
                   {t.repos.exportCSV}
                 </button>
@@ -150,16 +167,28 @@ export function RepoList({ repos, username }: Props) {
       />
 
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-[var(--color-text-muted)]">
+        <div className="text-center py-16 text-(--color-text-muted)">
           <p className="text-lg">{t.repos.noMatch}</p>
           <p className="text-sm mt-1">{t.repos.tryAdjusting}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {filtered.map((repo) => (
-            <RepoCard key={repo.id} repo={repo} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {visible.map((repo) => (
+              <RepoCard key={repo.id} repo={repo} />
+            ))}
+          </div>
+          {visibleCount < filtered.length && (
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="px-6 py-2.5 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:bg-gray-50 hover:border-gray-300 active:scale-98 transition-all shadow-sm"
+              >
+                {t.common.show} {Math.min(PAGE_SIZE, filtered.length - visibleCount)} {t.common.repos}
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

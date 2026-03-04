@@ -17,7 +17,7 @@ export function HeroSection({ onSubmit }: Props) {
     };
 
     return (
-        <div className="relative pt-20 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+        <div className="relative flex-1 flex flex-col justify-center pb-16 md:pb-24 overflow-hidden">
             {/* Background Gradients */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none z-0">
                 <div className="absolute top-[-20%] left-[10%] w-[500px] h-[500px] rounded-full bg-blue-400/20 blur-[100px] animate-float" />
@@ -30,7 +30,7 @@ export function HeroSection({ onSubmit }: Props) {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                     </span>
-                    Astrolabe 1.0 is here
+                    {t.landing.heroBadge}
                 </div>
 
                 <h1 className="font-bold tracking-tight mb-6 leading-tight">

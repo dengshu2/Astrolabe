@@ -37,7 +37,7 @@ export function Header({ username, onNavigate, onGoHome }: Props) {
           </div>
           <div className="flex flex-col items-start">
             <span className="text-lg font-bold tracking-tight text-gray-900 leading-none">Astrolabe</span>
-            <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase mt-0.5">Traffic Analytics</span>
+            <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase mt-0.5">{t.header.subtitle}</span>
           </div>
         </button>
 

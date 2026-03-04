@@ -18,11 +18,12 @@ export const zh: Translations = {
     header: {
         searchPlaceholder: "搜索其他用户...",
         github: "GitHub",
-
+        subtitle: "收藏探索器",
     },
 
     // Landing Page
     landing: {
+        heroBadge: "Astrolabe 1.0 已发布",
         heroTitle: "探索你的",
         heroTitleHighlight: "星标",
         heroTitleEnd: "宇宙",
@@ -32,6 +33,9 @@ export const zh: Translations = {
         exploreButton: "探索",
         hint: "输入任意公开的 GitHub 用户名即可使用，无需登录",
         suggestedUsers: "试试探索",
+        featureHeading: "你需要的一切",
+        featureHeadingHighlight: "用于理解你的收藏",
+        featureSubheading: "强大的功能帮助你提升开源影响力，理解你的受众。",
         features: {
             visualInsights: {
                 title: "可视化洞察",
@@ -50,6 +54,10 @@ export const zh: Translations = {
                 description: "自动生成 GitHub Lists 分类建议和用户技术画像提示词。",
             },
         },
+        ctaHeading: "准备好深入了解你的收藏了吗？",
+        ctaDescription: "加入数千名开发者的行列，用 Astrolabe 追踪你的开源影响力。无需付费，完全开源。",
+        ctaButton: "立即开始",
+        ctaGithub: "在 GitHub Star",
     },
 
     // Dashboard
@@ -103,6 +111,16 @@ export const zh: Translations = {
         sortRecentlyUpdated: "最近更新",
         sortMostStars: "最多 Stars",
         sortName: "按名称",
+    },
+
+    // Progress
+    progress: {
+        loadingRepos: "正在加载收藏仓库...",
+    },
+
+    // Footer
+    footer: {
+        copyright: "© 2026 Astrolabe。为开源社区用 ❤️ 打造。",
     },
 
 

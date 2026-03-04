@@ -13,9 +13,10 @@ export interface Translations {
     header: {
         searchPlaceholder: string;
         github: string;
-
+        subtitle: string;
     };
     landing: {
+        heroBadge: string;
         heroTitle: string;
         heroTitleHighlight: string;
         heroTitleEnd: string;
@@ -24,12 +25,19 @@ export interface Translations {
         exploreButton: string;
         hint: string;
         suggestedUsers: string;
+        featureHeading: string;
+        featureHeadingHighlight: string;
+        featureSubheading: string;
         features: {
             visualInsights: { title: string; description: string };
             zeroFriction: { title: string; description: string };
             dataExport: { title: string; description: string };
             aiPrompts: { title: string; description: string };
         };
+        ctaHeading: string;
+        ctaDescription: string;
+        ctaButton: string;
+        ctaGithub: string;
     };
     dashboard: {
         loadingStars: string;
@@ -60,6 +68,12 @@ export interface Translations {
         export: string;
         exportJSON: string;
         exportCSV: string;
+    };
+    progress: {
+        loadingRepos: string;
+    };
+    footer: {
+        copyright: string;
     };
     filters: {
         filterBy: string;
@@ -117,11 +131,12 @@ export const en: Translations = {
     header: {
         searchPlaceholder: "Search another user...",
         github: "GitHub",
-
+        subtitle: "Stars Explorer",
     },
 
     // Landing Page
     landing: {
+        heroBadge: "Astrolabe 1.0 is here",
         heroTitle: "Explore your",
         heroTitleHighlight: "starred",
         heroTitleEnd: "universe",
@@ -131,6 +146,9 @@ export const en: Translations = {
         exploreButton: "Explore",
         hint: "Try it with any public GitHub username — no sign-in needed",
         suggestedUsers: "Try exploring",
+        featureHeading: "Everything you need to",
+        featureHeadingHighlight: "understand your stars",
+        featureSubheading: "Powerful features to help you grow your open source presence and understand your audience.",
         features: {
             visualInsights: {
                 title: "Visual Insights",
@@ -149,6 +167,10 @@ export const en: Translations = {
                 description: "Generate prompts for GitHub Lists categorization and user persona analysis.",
             },
         },
+        ctaHeading: "Ready to dive into your analytics?",
+        ctaDescription: "Join thousands of developers who are tracking their open source impact with Astrolabe. No credit card required, completely open source.",
+        ctaButton: "Get Started Now",
+        ctaGithub: "Star on GitHub",
     },
 
     // Dashboard
@@ -187,6 +209,16 @@ export const en: Translations = {
         export: "Export",
         exportJSON: "Export JSON",
         exportCSV: "Export CSV",
+    },
+
+    // Progress
+    progress: {
+        loadingRepos: "Loading starred repos...",
+    },
+
+    // Footer
+    footer: {
+        copyright: "© 2026 Astrolabe. Built with ❤️ for the open source community.",
     },
 
     // Filters

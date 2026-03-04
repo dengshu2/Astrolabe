@@ -4,8 +4,8 @@ import type {
   StarredRepo,
   StarTimelineEntry,
 } from "@/types/github";
-import { LANGUAGE_COLORS } from "@/lib/constants";
-import { getLanguageColor } from "@/lib/utils";
+import { LANGUAGE_COLORS, ABANDONED_DAYS, STALE_DAYS } from "@/lib/constants";
+import { getLanguageColor, daysSince } from "@/lib/utils";
 
 /** Derive all dashboard statistics from the raw repo list */
 export function useStarStats(repos: StarredRepo[]) {
@@ -83,7 +83,6 @@ export function useStarStats(repos: StarredRepo[]) {
   }, [repos]);
 
   const healthSummary = useMemo(() => {
-    const now = Date.now();
     let active = 0,
       stale = 0,
       archived = 0,
@@ -93,9 +92,9 @@ export function useStarStats(repos: StarredRepo[]) {
         archived++;
         continue;
       }
-      const days = (now - new Date(repo.pushed_at).getTime()) / 86400000;
-      if (days >= 730) abandoned++;
-      else if (days >= 365) stale++;
+      const days = daysSince(repo.pushed_at);
+      if (days >= ABANDONED_DAYS) abandoned++;
+      else if (days >= STALE_DAYS) stale++;
       else active++;
     }
     return { active, stale, archived, abandoned, total: repos.length };

@@ -11,79 +11,108 @@ export function useStars(username: string) {
     status: "idle",
   });
   const abortRef = useRef<AbortController | null>(null);
-  const prevUsernameRef = useRef<string>("");
 
-  const load = useCallback(
-    (name: string, forceRefresh: boolean = false) => {
-      if (!name) return;
+  // Track previous username via state to detect changes during render
+  // (React-recommended pattern for "storing information from previous renders")
+  const [prevUsername, setPrevUsername] = useState("");
 
-      // Try cache first (unless force refresh)
-      if (!forceRefresh) {
-        const cached = getCachedStars(name);
-        if (cached) {
-          setRepos(cached);
-          setProgress({
-            loaded: cached.length,
-            total: cached.length,
-            status: "done",
-          });
-          return;
-        }
-      } else {
-        // Clear cache on force refresh
-        clearCachedStars(name);
-      }
+  if (username && username !== prevUsername) {
+    setPrevUsername(username);
 
-      // Abort any ongoing request
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
+    const cached = getCachedStars(username);
+    if (cached) {
+      setRepos(cached);
+      setProgress({
+        loaded: cached.length,
+        total: cached.length,
+        status: "done",
+      });
+    } else {
       setRepos([]);
       setProgress({ loaded: 0, total: null, status: "loading" });
-
-      fetchAllStars(name, setProgress, controller.signal)
-        .then((result) => {
-          setRepos(result);
-          setProgress({
-            loaded: result.length,
-            total: result.length,
-            status: "done",
-          });
-          // Cache the result
-          setCachedStars(name, result);
-        })
-        .catch((err) => {
-          if (err instanceof DOMException && err.name === "AbortError") return;
-
-          // Extract HTTP status code from Octokit RequestError
-          const statusCode =
-            err && typeof err === "object" && "status" in err
-              ? (err as { status: number }).status
-              : undefined;
-
-          setProgress((p) => ({
-            ...p,
-            status: "error",
-            error: err instanceof Error ? err.message : "Unknown error",
-            errorCode: statusCode,
-          }));
-        });
-    },
-    []
-  );
-
-  // Fetch when username changes
-  useEffect(() => {
-    if (username && username !== prevUsernameRef.current) {
-      prevUsernameRef.current = username;
-      load(username, false);
     }
-  }, [username, load]);
+  }
+
+  // Fetch from API when status is "loading" (cache miss)
+  useEffect(() => {
+    if (!username || progress.status !== "loading") return;
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    fetchAllStars(username, setProgress, controller.signal)
+      .then((result) => {
+        setRepos(result);
+        setProgress({
+          loaded: result.length,
+          total: result.length,
+          status: "done",
+        });
+        setCachedStars(username, result);
+      })
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+
+        const statusCode =
+          err && typeof err === "object" && "status" in err
+            ? (err as { status: number }).status
+            : undefined;
+
+        setProgress((p) => ({
+          ...p,
+          status: "error",
+          error: err instanceof Error ? err.message : "Unknown error",
+          errorCode: statusCode,
+        }));
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [username, progress.status]);
 
   // Force reload (bypass cache)
-  const reload = useCallback(() => load(username, true), [username, load]);
+  const reload = useCallback(() => {
+    if (!username) return;
+
+    clearCachedStars(username);
+    setPrevUsername("");
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setRepos([]);
+    setProgress({ loaded: 0, total: null, status: "loading" });
+
+    fetchAllStars(username, setProgress, controller.signal)
+      .then((result) => {
+        setRepos(result);
+        setProgress({
+          loaded: result.length,
+          total: result.length,
+          status: "done",
+        });
+        setCachedStars(username, result);
+        setPrevUsername(username);
+      })
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+
+        const statusCode =
+          err && typeof err === "object" && "status" in err
+            ? (err as { status: number }).status
+            : undefined;
+
+        setProgress((p) => ({
+          ...p,
+          status: "error",
+          error: err instanceof Error ? err.message : "Unknown error",
+          errorCode: statusCode,
+        }));
+      });
+  }, [username]);
 
   return { repos, progress, reload };
 }
-
