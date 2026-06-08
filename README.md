@@ -51,9 +51,9 @@
    cd Astrolabe
    ```
 
-2. Create the required network:
+2. Create the required proxy network:
    ```bash
-   docker network create npm-network || true
+   docker network create proxy-network || true
    ```
 
 3. Start the application:

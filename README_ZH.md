@@ -51,9 +51,9 @@
    cd Astrolabe
    ```
 
-2. 创建所需的网络：
+2. 创建所需的反向代理网络：
    ```bash
-   docker network create npm-network || true
+   docker network create proxy-network || true
    ```
 
 3. 启动服务：
