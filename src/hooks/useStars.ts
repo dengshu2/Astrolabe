@@ -33,6 +33,40 @@ export function useStars(username: string) {
     }
   }
 
+  // Shared fetch + result/error handling for both the cache-miss effect and
+  // the manual reload path. onDone runs after a successful fetch.
+  const runFetch = useCallback(
+    (controller: AbortController, onDone?: () => void) => {
+      fetchAllStars(username, setProgress, controller.signal)
+        .then((result) => {
+          setRepos(result);
+          setProgress({
+            loaded: result.length,
+            total: result.length,
+            status: "done",
+          });
+          setCachedStars(username, result);
+          onDone?.();
+        })
+        .catch((err) => {
+          if (err instanceof DOMException && err.name === "AbortError") return;
+
+          const statusCode =
+            err && typeof err === "object" && "status" in err
+              ? (err as { status: number }).status
+              : undefined;
+
+          setProgress((p) => ({
+            ...p,
+            status: "error",
+            error: err instanceof Error ? err.message : "Unknown error",
+            errorCode: statusCode,
+          }));
+        });
+    },
+    [username]
+  );
+
   // Fetch from API when status is "loading" (cache miss)
   useEffect(() => {
     if (!username || progress.status !== "loading") return;
@@ -41,36 +75,12 @@ export function useStars(username: string) {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    fetchAllStars(username, setProgress, controller.signal)
-      .then((result) => {
-        setRepos(result);
-        setProgress({
-          loaded: result.length,
-          total: result.length,
-          status: "done",
-        });
-        setCachedStars(username, result);
-      })
-      .catch((err) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-
-        const statusCode =
-          err && typeof err === "object" && "status" in err
-            ? (err as { status: number }).status
-            : undefined;
-
-        setProgress((p) => ({
-          ...p,
-          status: "error",
-          error: err instanceof Error ? err.message : "Unknown error",
-          errorCode: statusCode,
-        }));
-      });
+    runFetch(controller);
 
     return () => {
       controller.abort();
     };
-  }, [username, progress.status]);
+  }, [username, progress.status, runFetch]);
 
   // Force reload (bypass cache)
   const reload = useCallback(() => {
@@ -86,33 +96,8 @@ export function useStars(username: string) {
     setRepos([]);
     setProgress({ loaded: 0, total: null, status: "loading" });
 
-    fetchAllStars(username, setProgress, controller.signal)
-      .then((result) => {
-        setRepos(result);
-        setProgress({
-          loaded: result.length,
-          total: result.length,
-          status: "done",
-        });
-        setCachedStars(username, result);
-        setPrevUsername(username);
-      })
-      .catch((err) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-
-        const statusCode =
-          err && typeof err === "object" && "status" in err
-            ? (err as { status: number }).status
-            : undefined;
-
-        setProgress((p) => ({
-          ...p,
-          status: "error",
-          error: err instanceof Error ? err.message : "Unknown error",
-          errorCode: statusCode,
-        }));
-      });
-  }, [username]);
+    runFetch(controller, () => setPrevUsername(username));
+  }, [username, runFetch]);
 
   return { repos, progress, reload };
 }

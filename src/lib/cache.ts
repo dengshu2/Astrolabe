@@ -15,7 +15,7 @@ interface CacheEntry {
 export function getCachedStars(username: string): StarredRepo[] | null {
     try {
         const key = CACHE_KEY_PREFIX + username.toLowerCase();
-        const cached = sessionStorage.getItem(key);
+        const cached = localStorage.getItem(key);
         if (!cached) return null;
 
         const entry: CacheEntry = JSON.parse(cached);
@@ -23,7 +23,7 @@ export function getCachedStars(username: string): StarredRepo[] | null {
 
         // Check if cache is expired
         if (now - entry.timestamp > CACHE_EXPIRY_MS) {
-            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
             return null;
         }
 
@@ -43,7 +43,7 @@ export function setCachedStars(username: string, data: StarredRepo[]): void {
             data,
             timestamp: Date.now(),
         };
-        sessionStorage.setItem(key, JSON.stringify(entry));
+        localStorage.setItem(key, JSON.stringify(entry));
     } catch {
         // Ignore storage errors (e.g., quota exceeded)
     }
@@ -55,7 +55,7 @@ export function setCachedStars(username: string, data: StarredRepo[]): void {
 export function clearCachedStars(username: string): void {
     try {
         const key = CACHE_KEY_PREFIX + username.toLowerCase();
-        sessionStorage.removeItem(key);
+        localStorage.removeItem(key);
     } catch {
         // Ignore errors
     }

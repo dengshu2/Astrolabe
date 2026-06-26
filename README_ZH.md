@@ -101,10 +101,13 @@ Astrolabe/
 ├── images/              # 项目截图
 ├── public/              # 静态资源
 ├── src/                 # 源代码
-│   ├── components/      # React 组件
+│   ├── api/             # GitHub API 客户端
+│   ├── components/      # 通用 UI 组件
+│   ├── features/        # 功能模块（看板、仓库、提示词、落地页）
 │   ├── hooks/           # 自定义 Hooks
-│   ├── types/           # TypeScript 类型定义
-│   └── utils/           # 工具函数
+│   ├── i18n/            # 国际化（中 / 英）
+│   ├── lib/             # 工具函数、缓存、常量
+│   └── types/           # TypeScript 类型定义
 ├── docker-compose.yml   # Docker Compose 配置
 ├── Dockerfile           # Docker 构建说明
 ├── index.html           # 入口 HTML 文件

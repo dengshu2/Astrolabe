@@ -52,7 +52,7 @@ async function fetchStarPage(
  * Fetch starred repos for a given username with concurrent requests.
  * Uses the PUBLIC endpoint — no authentication needed.
  * The star+json Accept header gives us starred_at timestamps.
- * If a token is stored, it will be used to increase rate limits.
+ * Note: unauthenticated requests are limited to 60/hour per IP by GitHub.
  * @param maxCount Maximum number of stars to fetch (default: MAX_STARS)
  */
 export async function fetchAllStars(

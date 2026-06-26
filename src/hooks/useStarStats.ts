@@ -4,8 +4,8 @@ import type {
   StarredRepo,
   StarTimelineEntry,
 } from "@/types/github";
-import { LANGUAGE_COLORS, ABANDONED_DAYS, STALE_DAYS } from "@/lib/constants";
-import { getLanguageColor, daysSince } from "@/lib/utils";
+import { LANGUAGE_COLORS } from "@/lib/constants";
+import { getLanguageColor, classifyHealth } from "@/lib/utils";
 
 /** Derive all dashboard statistics from the raw repo list */
 export function useStarStats(repos: StarredRepo[]) {
@@ -36,14 +36,16 @@ export function useStarStats(repos: StarredRepo[]) {
     // Check if "Other" is already in top 10
     const existingOtherIndex = top10.findIndex((s) => s.language === "Other");
     const restCount = rest.reduce((s, d) => s + d.count, 0);
-    const restPercentage = rest.reduce((s, d) => s + d.percentage, 0);
 
     if (existingOtherIndex >= 0) {
-      // Merge rest into existing "Other"
+      // Merge rest into existing "Other". Recompute percentage from the raw
+      // count rather than summing per-language rounded percentages (which
+      // accumulates rounding error and can show 0% for a non-trivial tail).
+      const mergedCount = top10[existingOtherIndex].count + restCount;
       top10[existingOtherIndex] = {
         ...top10[existingOtherIndex],
-        count: top10[existingOtherIndex].count + restCount,
-        percentage: top10[existingOtherIndex].percentage + restPercentage,
+        count: mergedCount,
+        percentage: Math.round((mergedCount / total) * 100),
       };
       return top10;
     } else {
@@ -53,7 +55,7 @@ export function useStarStats(repos: StarredRepo[]) {
         {
           language: "Other",
           count: restCount,
-          percentage: restPercentage,
+          percentage: Math.round((restCount / total) * 100),
           color: "#8b949e",
         },
       ];
@@ -88,14 +90,20 @@ export function useStarStats(repos: StarredRepo[]) {
       archived = 0,
       abandoned = 0;
     for (const repo of repos) {
-      if (repo.archived) {
-        archived++;
-        continue;
+      // Reuse the single source of truth for health classification.
+      switch (classifyHealth(repo)) {
+        case "archived":
+          archived++;
+          break;
+        case "abandoned":
+          abandoned++;
+          break;
+        case "stale":
+          stale++;
+          break;
+        default:
+          active++;
       }
-      const days = daysSince(repo.pushed_at);
-      if (days >= ABANDONED_DAYS) abandoned++;
-      else if (days >= STALE_DAYS) stale++;
-      else active++;
     }
     return { active, stale, archived, abandoned, total: repos.length };
   }, [repos]);
