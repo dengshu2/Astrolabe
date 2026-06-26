@@ -101,10 +101,13 @@ Astrolabe/
 ├── images/              # Project screenshots
 ├── public/              # Static assets
 ├── src/                 # Source code
-│   ├── components/      # React components
+│   ├── api/             # GitHub API client
+│   ├── components/      # Shared UI components
+│   ├── features/        # Feature modules (dashboard, repos, prompts, landing)
 │   ├── hooks/           # Custom React hooks
-│   ├── types/           # TypeScript type definitions
-│   └── utils/           # Utility functions
+│   ├── i18n/            # Internationalization (en / zh)
+│   ├── lib/             # Utilities, caching, constants
+│   └── types/           # TypeScript type definitions
 ├── docker-compose.yml   # Docker Compose configuration
 ├── Dockerfile           # Docker build instructions
 ├── index.html           # Entry HTML file

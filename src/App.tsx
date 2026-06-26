@@ -1,31 +1,37 @@
-import { useState, useCallback } from "react";
+import { useCallback, lazy, Suspense } from "react";
 import { Header } from "@/components/Header";
-import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { LandingPage } from "@/features/dashboard/LandingPage";
+import { useUrlUsername } from "@/hooks/useUrlUsername";
+
+// Lazily load the dashboard (and its chart library) so it isn't part of the
+// initial bundle shown on the landing page.
+const DashboardPage = lazy(() =>
+  import("@/features/dashboard/DashboardPage").then((m) => ({
+    default: m.DashboardPage,
+  }))
+);
 
 export default function App() {
-  const [username, setUsername] = useState("");
-
-  const handleNavigate = useCallback((name: string) => {
-    setUsername(name);
-  }, []);
+  const [username, navigate] = useUrlUsername();
 
   const handleGoHome = useCallback(() => {
-    setUsername("");
-  }, []);
+    navigate("");
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header
         username={username || undefined}
-        onNavigate={handleNavigate}
+        onNavigate={navigate}
         onGoHome={handleGoHome}
       />
       <main className="flex-1">
         {username ? (
-          <DashboardPage username={username} />
+          <Suspense fallback={null}>
+            <DashboardPage username={username} />
+          </Suspense>
         ) : (
-          <LandingPage onSubmit={handleNavigate} />
+          <LandingPage onSubmit={navigate} />
         )}
       </main>
     </div>
