@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import type { StarredRepo } from "@/types/github";
 import {
+  avatarUrl,
   cn,
   classifyHealth,
   formatCount,
@@ -45,8 +46,10 @@ export function RepoCard({ repo }: Props) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <img
-            src={repo.owner.avatar_url}
+            src={avatarUrl(repo.owner.avatar_url, 64)}
             alt={repo.owner.login}
+            loading="lazy"
+            decoding="async"
             className="w-8 h-8 rounded-full shrink-0 border border-gray-100"
           />
           <div className="min-w-0">

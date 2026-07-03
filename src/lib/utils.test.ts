@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  avatarUrl,
   cn,
   classifyHealth,
   daysSince,
@@ -83,5 +84,19 @@ describe("cn", () => {
   it("merges truthy class values", () => {
     const hidden = false;
     expect(cn("a", hidden && "b", "c")).toBe("a c");
+  });
+});
+
+describe("avatarUrl", () => {
+  it("appends the size param to a URL with an existing query", () => {
+    expect(avatarUrl("https://avatars.githubusercontent.com/u/1?v=4", 64)).toBe(
+      "https://avatars.githubusercontent.com/u/1?v=4&s=64"
+    );
+  });
+
+  it("appends the size param to a URL without a query", () => {
+    expect(avatarUrl("https://avatars.githubusercontent.com/u/1", 64)).toBe(
+      "https://avatars.githubusercontent.com/u/1?s=64"
+    );
   });
 });

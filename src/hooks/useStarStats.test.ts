@@ -67,7 +67,7 @@ describe("useStarStats healthSummary", () => {
 });
 
 describe("useStarStats timeline", () => {
-  it("buckets by month and accumulates", () => {
+  it("buckets by month, fills gap months with zero, and accumulates", () => {
     const repos = [
       makeRepo({ starred_at: "2024-01-15T00:00:00Z" }),
       makeRepo({ starred_at: "2024-01-20T00:00:00Z" }),
@@ -76,7 +76,22 @@ describe("useStarStats timeline", () => {
     const { result } = renderHook(() => useStarStats(repos));
     expect(result.current.timeline).toEqual([
       { month: "2024-01", count: 2, cumulative: 2 },
+      { month: "2024-02", count: 0, cumulative: 2 },
       { month: "2024-03", count: 1, cumulative: 3 },
+    ]);
+  });
+
+  it("fills gaps across a year boundary", () => {
+    const repos = [
+      makeRepo({ starred_at: "2023-11-01T00:00:00Z" }),
+      makeRepo({ starred_at: "2024-02-01T00:00:00Z" }),
+    ];
+    const { result } = renderHook(() => useStarStats(repos));
+    expect(result.current.timeline.map((e) => e.month)).toEqual([
+      "2023-11",
+      "2023-12",
+      "2024-01",
+      "2024-02",
     ]);
   });
 

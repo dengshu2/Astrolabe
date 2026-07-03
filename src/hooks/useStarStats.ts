@@ -7,6 +7,17 @@ import type {
 import { LANGUAGE_COLORS } from "@/lib/constants";
 import { getLanguageColor, classifyHealth } from "@/lib/utils";
 
+/** Every "YYYY-MM" key between two month keys, inclusive */
+function monthRange(start: string, end: string): string[] {
+  const [sy, sm] = start.split("-").map(Number);
+  const [ey, em] = end.split("-").map(Number);
+  const months: string[] = [];
+  for (let i = sy * 12 + (sm - 1); i <= ey * 12 + (em - 1); i++) {
+    months.push(`${Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, "0")}`);
+  }
+  return months;
+}
+
 /** Derive all dashboard statistics from the raw repo list */
 export function useStarStats(repos: StarredRepo[]) {
   const languageStats = useMemo<LanguageStat[]>(() => {
@@ -73,12 +84,12 @@ export function useStarStats(repos: StarredRepo[]) {
       map.set(month, (map.get(month) ?? 0) + 1);
     }
 
-    // Sort and compute cumulative
-    const sorted = Array.from(map.entries()).sort(([a], [b]) =>
-      a.localeCompare(b)
-    );
+    // Fill months with no stars: the chart's x-axis is categorical, so a
+    // missing month would silently compress the time scale.
+    const keys = Array.from(map.keys()).sort();
     let cumulative = 0;
-    return sorted.map(([month, count]) => {
+    return monthRange(keys[0], keys[keys.length - 1]).map((month) => {
+      const count = map.get(month) ?? 0;
       cumulative += count;
       return { month, count, cumulative };
     });

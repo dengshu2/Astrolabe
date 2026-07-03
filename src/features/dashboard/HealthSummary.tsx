@@ -1,7 +1,7 @@
 import { Activity, AlertTriangle, Archive, Skull } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/i18n";
-import { Card } from "@/components/ui/Card";
+import type { RepoHealth } from "@/types/github";
 
 interface Props {
   summary: {
@@ -11,9 +11,12 @@ interface Props {
     abandoned: number;
     total: number;
   };
+  /** Currently selected health filter; clicking a card toggles it */
+  selected: RepoHealth | "all";
+  onSelect: (health: RepoHealth | "all") => void;
 }
 
-export function HealthSummary({ summary }: Props) {
+export function HealthSummary({ summary, selected, onSelect }: Props) {
   const { t } = useLanguage();
 
   const cards = [
@@ -50,10 +53,18 @@ export function HealthSummary({ summary }: Props) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map(({ key, label, icon: Icon, color, bg }) => (
-        <Card
+        <button
           key={key}
-          className="flex items-center gap-4 p-5 border-0 shadow-sm hover:shadow-md transition-shadow"
-          noPadding
+          type="button"
+          aria-pressed={selected === key}
+          onClick={() => onSelect(selected === key ? "all" : key)}
+          className={cn(
+            "flex items-center gap-4 p-5 text-left cursor-pointer",
+            "bg-(--color-surface) rounded-(--radius-card) shadow-sm hover:shadow-md transition-all",
+            selected === key
+              ? "ring-2 ring-(--color-brand)"
+              : "ring-1 ring-transparent"
+          )}
         >
           <div className={cn("p-3 rounded-xl shrink-0", bg)}>
             <Icon className={cn("w-6 h-6", color)} />
@@ -66,7 +77,7 @@ export function HealthSummary({ summary }: Props) {
               {label}
             </div>
           </div>
-        </Card>
+        </button>
       ))}
     </div>
   );

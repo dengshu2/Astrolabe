@@ -1,4 +1,5 @@
 import { useCallback, lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { LandingPage } from "@/features/dashboard/LandingPage";
 import { useUrlUsername } from "@/hooks/useUrlUsername";
@@ -27,8 +28,17 @@ export default function App() {
       />
       <main className="flex-1">
         {username ? (
-          <Suspense fallback={null}>
-            <DashboardPage username={username} />
+          // Shown while the lazy dashboard chunk downloads — avoid a blank page
+          <Suspense
+            fallback={
+              <div className="flex justify-center py-24">
+                <Loader2 className="w-6 h-6 animate-spin text-(--color-text-muted)" />
+              </div>
+            }
+          >
+            {/* Keyed by username so per-user UI state (filters, scroll)
+                resets when navigating to a different user */}
+            <DashboardPage key={username} username={username} />
           </Suspense>
         ) : (
           <LandingPage onSubmit={navigate} />

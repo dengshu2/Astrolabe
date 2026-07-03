@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { Download, ChevronDown } from "lucide-react";
 import type { RepoHealth, SortField, StarredRepo } from "@/types/github";
 import { classifyHealth } from "@/lib/utils";
@@ -10,11 +10,20 @@ import { useLanguage } from "@/i18n";
 interface Props {
   repos: StarredRepo[];
   username?: string;
+  /** Controlled by the dashboard so the health summary cards can drive it */
+  healthFilter: RepoHealth | "all";
+  onHealthFilterChange: (health: RepoHealth | "all") => void;
 }
 
-export function RepoList({ repos, username }: Props) {
+export function RepoList({
+  repos,
+  username,
+  healthFilter,
+  onHealthFilterChange,
+}: Props) {
   const [search, setSearch] = useState("");
-  const [healthFilter, setHealthFilter] = useState<RepoHealth | "all">("all");
+  // Defer filtering so typing stays responsive on large star lists
+  const deferredSearch = useDeferredValue(search);
   const [sortField, setSortField] = useState<SortField>("starred_at");
   const [languageFilter, setLanguageFilter] = useState("");
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -36,8 +45,8 @@ export function RepoList({ repos, username }: Props) {
     let result = repos;
 
     // Search
-    if (search) {
-      const q = search.toLowerCase();
+    if (deferredSearch) {
+      const q = deferredSearch.toLowerCase();
       result = result.filter(
         (r) =>
           r.full_name.toLowerCase().includes(q) ||
@@ -78,14 +87,14 @@ export function RepoList({ repos, username }: Props) {
     });
 
     return result;
-  }, [repos, search, healthFilter, sortField, languageFilter]);
+  }, [repos, deferredSearch, healthFilter, sortField, languageFilter]);
 
   // Pagination: show repos incrementally
   const PAGE_SIZE = 30;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   // Reset visible count when filters change
-  const filterKey = `${search}|${healthFilter}|${sortField}|${languageFilter}`;
+  const filterKey = `${deferredSearch}|${healthFilter}|${sortField}|${languageFilter}`;
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
   if (filterKey !== prevFilterKey) {
     setPrevFilterKey(filterKey);
@@ -158,7 +167,7 @@ export function RepoList({ repos, username }: Props) {
         search={search}
         onSearchChange={setSearch}
         healthFilter={healthFilter}
-        onHealthFilterChange={setHealthFilter}
+        onHealthFilterChange={onHealthFilterChange}
         sortField={sortField}
         onSortFieldChange={setSortField}
         languageFilter={languageFilter}

@@ -1,43 +1,91 @@
-import { Octokit } from "@octokit/rest";
 import { STARS_PER_PAGE, MAX_STARS } from "@/lib/constants";
 import type { StarredRepo, FetchProgress } from "@/types/github";
 
-
-interface StarResponse {
-  starred_at: string;
-  repo: StarredRepo;
-}
+const API_BASE = "https://api.github.com";
 
 /** Number of concurrent requests to make */
 const CONCURRENT_REQUESTS = 3;
+
+/** Error carrying the HTTP status so callers can distinguish 404/403 */
+export class GitHubApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "GitHubApiError";
+    this.status = status;
+  }
+}
+
+/** Raw shape of one item from GET /users/{username}/starred (star+json) */
+interface RawStarItem {
+  starred_at: string;
+  repo: StarredRepo & Record<string, unknown>;
+}
+
+/**
+ * Pick only the fields declared on StarredRepo. The raw API object has 100+
+ * fields; keeping them all bloats memory and overflows the localStorage
+ * quota when caching large accounts.
+ */
+function toStarredRepo(item: RawStarItem): StarredRepo {
+  const r = item.repo;
+  return {
+    id: r.id,
+    name: r.name,
+    full_name: r.full_name,
+    html_url: r.html_url,
+    description: r.description,
+    language: r.language,
+    stargazers_count: r.stargazers_count,
+    forks_count: r.forks_count,
+    open_issues_count: r.open_issues_count,
+    archived: r.archived,
+    pushed_at: r.pushed_at,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+    topics: r.topics ?? [],
+    owner: {
+      login: r.owner.login,
+      avatar_url: r.owner.avatar_url,
+      html_url: r.owner.html_url,
+    },
+    starred_at: item.starred_at,
+  };
+}
 
 /**
  * Fetch a single page of starred repos
  */
 async function fetchStarPage(
-  octokit: Octokit,
   username: string,
   page: number,
   signal?: AbortSignal
 ): Promise<{ repos: StarredRepo[]; hasMore: boolean; lastPage: number | null }> {
-  const response = await octokit.request("GET /users/{username}/starred", {
-    username,
-    per_page: STARS_PER_PAGE,
-    page,
+  const url =
+    `${API_BASE}/users/${encodeURIComponent(username)}/starred` +
+    `?per_page=${STARS_PER_PAGE}&page=${page}`;
+
+  const response = await fetch(url, {
     headers: {
+      // The star+json media type includes starred_at timestamps
       Accept: "application/vnd.github.star+json",
     },
-    request: { signal },
+    signal,
   });
 
-  const items = response.data as unknown as StarResponse[];
-  const repos = items.map((item) => ({
-    ...item.repo,
-    starred_at: item.starred_at,
-  }));
+  if (!response.ok) {
+    throw new GitHubApiError(
+      `GitHub API responded with ${response.status}`,
+      response.status
+    );
+  }
+
+  const items = (await response.json()) as RawStarItem[];
+  const repos = items.map(toStarredRepo);
 
   // Parse Link header for total estimate
-  const linkHeader = response.headers.link ?? "";
+  const linkHeader = response.headers.get("link") ?? "";
   const lastMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
   const lastPage = lastMatch ? parseInt(lastMatch[1]) : null;
 
@@ -61,13 +109,10 @@ export async function fetchAllStars(
   signal?: AbortSignal,
   maxCount: number = MAX_STARS
 ): Promise<StarredRepo[]> {
-
-  const octokit = new Octokit();
-
   onProgress?.({ loaded: 0, total: null, status: "loading" });
 
   // First, fetch page 1 to determine total pages
-  const firstResult = await fetchStarPage(octokit, username, 1, signal);
+  const firstResult = await fetchStarPage(username, 1, signal);
 
   if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
@@ -112,7 +157,7 @@ export async function fetchAllStars(
 
     // Fetch pages concurrently
     const results = await Promise.all(
-      pagesToFetch.map((page) => fetchStarPage(octokit, username, page, signal))
+      pagesToFetch.map((page) => fetchStarPage(username, page, signal))
     );
 
     // Process results in order
@@ -145,4 +190,3 @@ export async function fetchAllStars(
 
   return result;
 }
-

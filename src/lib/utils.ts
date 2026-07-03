@@ -40,6 +40,14 @@ export function formatCount(n: number): string {
   return String(n);
 }
 
+/**
+ * GitHub avatar URL resized server-side via the `s` param.
+ * Default avatars are ~460px; cards render them at 32px.
+ */
+export function avatarUrl(url: string, size: number): string {
+  return `${url}${url.includes("?") ? "&" : "?"}s=${size}`;
+}
+
 /** Get a color for a language, fallback to hash-based */
 export function getLanguageColor(
   language: string | null,
