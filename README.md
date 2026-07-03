@@ -90,7 +90,7 @@
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS 4
 - **Visualization**: Recharts
-- **API Integration**: Octokit
+- **API Integration**: GitHub REST API (native fetch, no auth required)
 - **Icons**: Lucide React
 
 ## 📁 Project Structure

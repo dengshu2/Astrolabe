@@ -90,7 +90,7 @@
 - **构建工具**: Vite
 - **样式方案**: Tailwind CSS 4
 - **数据可视化**: Recharts
-- **API 集成**: Octokit
+- **API 集成**: GitHub REST API（原生 fetch，无需认证）
 - **图标库**: Lucide React
 
 ## 📁 项目结构

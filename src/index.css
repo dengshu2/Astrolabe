@@ -73,7 +73,9 @@
 /* ---- Base Styles ---- */
 body {
   margin: 0;
-  font-family: "Outfit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* System font stack — no webfont is shipped (CSP: font-src 'self'), so
+     don't claim families that never load. Includes CJK for the zh locale. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
   background-color: var(--color-background);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;

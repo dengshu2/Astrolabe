@@ -1,3 +1,5 @@
+import { useCallback, useRef, useState } from "react";
+import type { RepoHealth } from "@/types/github";
 import { useStars } from "@/hooks/useStars";
 import { useStarStats } from "@/hooks/useStarStats";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -20,6 +22,18 @@ export function DashboardPage({ username }: Props) {
   const { repos, progress, reload } = useStars(username);
   const { languageStats, timeline, healthSummary } = useStarStats(repos);
   const { t } = useLanguage();
+
+  // Health filter lives here so the summary cards and the repo list share it
+  const [healthFilter, setHealthFilter] = useState<RepoHealth | "all">("all");
+  const repoListRef = useRef<HTMLDivElement>(null);
+
+  const handleHealthSelect = useCallback((health: RepoHealth | "all") => {
+    setHealthFilter(health);
+    // Bring the (filtered) list into view so the click has a visible effect
+    if (health !== "all") {
+      repoListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   // Loading state — only show if we have no repos yet
   if (progress.status === "loading" && repos.length === 0) {
@@ -112,7 +126,11 @@ export function DashboardPage({ username }: Props) {
       </div>
 
       {/* Health summary cards */}
-      <HealthSummary summary={healthSummary} />
+      <HealthSummary
+        summary={healthSummary}
+        selected={healthFilter}
+        onSelect={handleHealthSelect}
+      />
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -135,7 +153,14 @@ export function DashboardPage({ username }: Props) {
       </Card>
 
       {/* Repo list with filters */}
-      <RepoList repos={repos} username={username} />
+      <div ref={repoListRef} className="scroll-mt-6">
+        <RepoList
+          repos={repos}
+          username={username}
+          healthFilter={healthFilter}
+          onHealthFilterChange={setHealthFilter}
+        />
+      </div>
     </div>
   );
 }

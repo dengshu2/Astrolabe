@@ -11,6 +11,17 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Keep the chart library in its own long-cacheable chunk so app
+          // code changes don't invalidate it.
+          recharts: ["recharts"],
+        },
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
