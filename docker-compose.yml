@@ -2,17 +2,18 @@ services:
   app:
     build: .
     container_name: astrolabe
-    restart: always
-    # Map host port 3000 to container port 80
-    # You can change '3000' to '80' if this is the only app on your VPS
+    restart: unless-stopped
     ports:
-      - "127.0.0.1:3002:80"
-    # Optional: health check
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - "127.0.0.1:3002:8080"
+    env_file: .env # GITHUB_TOKEN: a classic token with no scopes
+    environment:
+      # Caddy sets X-Real-IP to the visitor's address; lookups are limited per visitor.
+      - CLIENT_IP_HEADER=X-Real-IP
+      - ANALYTICS_ORIGINS=https://static.cloudflareinsights.com https://cloudflareinsights.com
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
     networks:
       - proxy-network
 

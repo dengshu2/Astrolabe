@@ -1,9 +1,9 @@
-import type { StarredRepo } from "@/types/github";
+import type { Repo } from "../types";
 
-/** Build a StarredRepo with sensible defaults; override only what a test cares about. */
-export function makeRepo(overrides: Partial<StarredRepo> = {}): StarredRepo {
+/** A repository with sensible defaults; override only what a test cares about. */
+export function makeRepo(overrides: Partial<Repo> = {}): Repo {
   return {
-    id: 1,
+    id: Math.floor(Math.random() * 1e9),
     name: "repo",
     full_name: "owner/repo",
     html_url: "https://github.com/owner/repo",
@@ -13,17 +13,12 @@ export function makeRepo(overrides: Partial<StarredRepo> = {}): StarredRepo {
     forks_count: 10,
     open_issues_count: 0,
     archived: false,
-    pushed_at: "2024-01-01T00:00:00Z",
+    fork: false,
+    pushed_at: "2026-09-01T00:00:00Z",
     created_at: "2020-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
     topics: [],
-    owner: { login: "owner", avatar_url: "", html_url: "" },
-    starred_at: "2024-01-01T00:00:00Z",
+    owner: { login: "owner", avatar_url: "https://avatars.githubusercontent.com/u/1?v=4" },
+    starred_at: "2026-09-01T00:00:00Z",
     ...overrides,
   };
-}
-
-/** Repeat a factory n times into an array. */
-export function times<T>(n: number, factory: (i: number) => T): T[] {
-  return Array.from({ length: n }, (_, i) => factory(i));
 }

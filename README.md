@@ -1,121 +1,61 @@
-<div align="center">
-  <h1 align="center">Astrolabe</h1>
-  <p align="center">Visualize any GitHub user's starred repositories. Enter a username, get instant insights.</p>
-  <p align="center">
-    <a href="https://astrolabe.dengshu.ovh/"><strong>Explore the Live Demo »</strong></a>
-  </p>
-</div>
+# Astrolabe
 
-<div align="center">
-   <a href="./README.md">English</a> | <a href="./README_ZH.md">简体中文</a>
-</div>
+[中文](./README_ZH.md)
 
----
+Enter a GitHub username and see everything they have starred: which languages, when, and which of those repositories are no longer maintained. No sign-in needed.
 
-## 📋 Table of Contents
+**Try it → [astrolabe.dengshu.ovh](https://astrolabe.dengshu.ovh)**
 
-- [✨ Features](#-features)
-- [📸 Preview](#-preview)
-- [🚀 Quick Start](#-quick-start)
-- [🛠️ Tech Stack](#%EF%B8%8F-tech-stack)
-- [📁 Project Structure](#-project-structure)
-- [📄 License](#-license)
+## What it shows
 
-## ✨ Features
+- **Health**: each starred repository is active (a commit within a year), quiet for a year, quiet for two, or archived. Choosing one filters the list.
+- **Languages** and a **star timeline** by month.
+- **Two AI prompts** to copy into any assistant: a developer profile, and a plan for sorting the stars into GitHub Lists (with candidates to unstar). They follow the page's language.
+- **The repositories**, searchable and filterable by health and language, sortable, and exportable as JSON or CSV.
+- The newest 3,000 stars of an account are analyzed; the total is always exact. Pages are linkable (`/?user=octocat`) and the page follows the system's light or dark setting, in Chinese or English.
 
-- **Language Distribution**: Visualize programming language usage across starred repositories.
-- **Star Timeline**: Interactive timeline chart showing when repositories were starred.
-- **Repository Health**: Automatically classify repositories as active, stale, abandoned, or archived.
-- **Search & Filter**: Powerful search capabilities to find specific starred repositories instantly.
-- **Direct Navigation**: One-click access to the original GitHub repository.
-- **No Auth Required**: Works directly with GitHub's public API without needing personal access tokens.
+## How it works
 
-## 📸 Preview
+A small Go server serves the page and `GET /api/stars?user=<login>`. It reads the profile and starred repositories from GitHub's REST API with its own token, keeps only the fields the page uses, and caches each answer for an hour (gzipped, within a memory budget). That gives every visitor a share of 5,000 requests an hour instead of GitHub's 60 per visitor without a token, and an account with 3,000 stars loads in about six seconds the first time and instantly after.
 
-### Dashboard Overview
-![Dashboard](./images/首页.png)
+`?refresh=1` fetches again if the cached copy is older than two minutes. Each visitor gets ten lookups that go to GitHub at once, then one more every 30 seconds (HTTP 429 past that); cached answers do not count. When GitHub's quota runs low the server answers 503 with `Retry-After` instead of using it up.
 
-### Repository Details
-![Repository Details](./images/仓库明细.png)
-
-### Kanban & AI Prompts
-![Kanban](./images/看板和提示词生成.png)
-
-## 🚀 Quick Start
-
-### Option 1: Docker Compose (Recommended)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/dengshu2/Astrolabe.git
-   cd Astrolabe
-   ```
-
-2. Create the required proxy network:
-   ```bash
-   docker network create proxy-network || true
-   ```
-
-3. Start the application:
-   ```bash
-   docker-compose up -d
-   ```
-
-4. Open your browser and visit [http://localhost:3002](http://localhost:3002)
-
-### Option 2: Run from Source
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/dengshu2/Astrolabe.git
-   cd Astrolabe
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and visit [http://localhost:5173](http://localhost:5173) (default Vite port)
-
-## 🛠️ Tech Stack
-
-- **Frontend Framework**: React 19
-- **Language**: TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS 4
-- **Visualization**: Recharts
-- **API Integration**: GitHub REST API (native fetch, no auth required)
-- **Icons**: Lucide React
-
-## 📁 Project Structure
+## Running it
 
 ```bash
-Astrolabe/
-├── dist/                # Production build artifacts
-├── images/              # Project screenshots
-├── public/              # Static assets
-├── src/                 # Source code
-│   ├── api/             # GitHub API client
-│   ├── components/      # Shared UI components
-│   ├── features/        # Feature modules (dashboard, repos, prompts, landing)
-│   ├── hooks/           # Custom React hooks
-│   ├── i18n/            # Internationalization (en / zh)
-│   ├── lib/             # Utilities, caching, constants
-│   └── types/           # TypeScript type definitions
-├── docker-compose.yml   # Docker Compose configuration
-├── Dockerfile           # Docker build instructions
-├── index.html           # Entry HTML file
-├── package.json         # Project metadata and dependencies
-├── tsconfig.json        # TypeScript configuration
-└── vite.config.ts       # Vite configuration
+# A classic token with no scopes: GitHub → Settings → Developer settings →
+# Personal access tokens → Tokens (classic), tick nothing.
+echo "GITHUB_TOKEN=ghp_..." > .env
+docker compose up -d --build
 ```
 
-## 📄 License
+The container listens on `127.0.0.1:3002`. To replace the token, edit `.env` and run `docker compose up -d`.
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+| Variable | Default | Meaning |
+|---|---|---|
+| `GITHUB_TOKEN` | | Token used for GitHub; without one GitHub allows 60 requests an hour. |
+| `MAX_STARS` | 3000 | Newest stars analyzed per account. |
+| `CACHE_TTL`, `CACHE_MB` | 1h, 64 | How long and how much to cache. |
+| `FETCH_BURST`, `FETCH_EVERY` | 10, 30s | Per-visitor allowance for lookups that reach GitHub. |
+| `CLIENT_IP_HEADER` | | Header the reverse proxy puts the visitor's address in (e.g. `X-Real-IP`). |
+| `ANALYTICS_ORIGINS` | | Extra origins the Content-Security-Policy allows for scripts and beacons. |
+
+## Development
+
+```bash
+npm install
+npm run dev            # the page on :5173, /api proxied to :8080
+npm test && npm run lint
+
+cd server
+GITHUB_TOKEN=... STATIC_DIR=../dist go run .   # the server on :8080
+go test ./...
+```
+
+## Stack
+
+React 19, TypeScript and Vite, styled with Quiet UI; charts are plain SVG. The server is Go with no dependencies beyond the standard library.
+
+## License
+
+MIT

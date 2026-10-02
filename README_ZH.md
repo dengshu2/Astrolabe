@@ -1,121 +1,61 @@
-<div align="center">
-  <h1 align="center">Astrolabe</h1>
-  <p align="center">可视化任何 GitHub 用户的 Star 仓库。输入用户名，立即获取洞察。</p>
-  <p align="center">
-    <a href="https://astrolabe.dengshu.ovh/"><strong>在线演示 »</strong></a>
-  </p>
-</div>
+# Astrolabe
 
-<div align="center">
-   <a href="./README.md">English</a> | <a href="./README_ZH.md">简体中文</a>
-</div>
+[English](./README.md)
 
----
+输入 GitHub 用户名，看他 Star 过的所有仓库：都是什么语言、什么时候收藏的，以及哪些已经没人维护。不用登录。
 
-## 📋 目录
+**在线使用 → [astrolabe.dengshu.ovh](https://astrolabe.dengshu.ovh)**
 
-- [✨ 功能特性](#-功能特性)
-- [📸 预览](#-预览)
-- [🚀 快速开始](#-快速开始)
-- [🛠️ 技术栈](#%EF%B8%8F-技术栈)
-- [📁 项目结构](#-项目结构)
-- [📄 许可证](#-许可证)
+## 能看到什么
 
-## ✨ 功能特性
+- **健康度**：每个收藏的仓库分为活跃（一年内有提交）、一年没更新、两年没更新、已归档，点一下就筛选下面的列表。
+- **语言分布**和按月的**收藏时间线**。
+- **两个 AI 提示词**，复制给任意 AI 助手：一个推测技术画像，一个把 Star 整理成 GitHub Lists 并挑出可以取消的。语言跟随页面。
+- **仓库列表**：可以搜索，按健康度和语言筛选，排序，导出 JSON 或 CSV。
+- 每个账号分析最近的 3,000 个 Star，总数始终准确。页面可以直接分享（`/?user=octocat`），跟随系统的浅色/深色，中英文都有。
 
-- **语言分布**: 可视化展示 Star 仓库的编程语言使用情况。
-- **Star 时间轴**: 交互式时间轴图表，展示仓库被 Star 的时间趋势。
-- **仓库健康度**: 自动将仓库分类为活跃、陈旧、废弃或已归档状态。
-- **搜索与过滤**: 强大的搜索功能，快速查找特定的 Star 仓库。
-- **直接跳转**: 一键跳转至原始 GitHub 仓库页面。
-- **无需认证**: 直接使用 GitHub 公共 API，无需个人访问令牌（Personal Access Token）。
+## 工作方式
 
-## 📸 预览
+一个 Go 小服务提供页面和 `GET /api/stars?user=<用户名>`。它用自己的 token 从 GitHub REST 接口读取用户资料和 Star 列表，只保留页面用得到的字段，每个结果缓存一小时（gzip 压缩，有内存上限）。这样所有访客共享每小时 5000 次的额度，而不是每人每小时只有 60 次；一个有 3000 个 Star 的账号第一次大约 6 秒，之后直接读缓存。
 
-### 仪表盘概览
-![仪表盘](./images/首页.png)
+`?refresh=1` 会在缓存超过两分钟时重新读取。每个访客可以连续发 10 次需要访问 GitHub 的查询，之后每 30 秒恢复 1 次，超出返回 429；读缓存不计数。GitHub 额度快用完时返回 503 和 `Retry-After`，不会把额度耗尽。
 
-### 仓库详情
-![仓库详情](./images/仓库明细.png)
-
-### 看板与 AI 提示词
-![看板](./images/看板和提示词生成.png)
-
-## 🚀 快速开始
-
-### 方式一：Docker Compose（推荐）
-
-1. 克隆仓库：
-   ```bash
-   git clone https://github.com/dengshu2/Astrolabe.git
-   cd Astrolabe
-   ```
-
-2. 创建所需的反向代理网络：
-   ```bash
-   docker network create proxy-network || true
-   ```
-
-3. 启动服务：
-   ```bash
-   docker-compose up -d
-   ```
-
-4. 打开浏览器访问 [http://localhost:3002](http://localhost:3002)
-
-### 方式二：源码运行
-
-1. 克隆仓库：
-   ```bash
-   git clone https://github.com/dengshu2/Astrolabe.git
-   cd Astrolabe
-   ```
-
-2. 安装依赖：
-   ```bash
-   npm install
-   ```
-
-3. 启动开发服务器：
-   ```bash
-   npm run dev
-   ```
-
-4. 打开浏览器访问 [http://localhost:5173](http://localhost:5173) (默认 Vite 端口)
-
-## 🛠️ 技术栈
-
-- **前端框架**: React 19
-- **开发语言**: TypeScript
-- **构建工具**: Vite
-- **样式方案**: Tailwind CSS 4
-- **数据可视化**: Recharts
-- **API 集成**: GitHub REST API（原生 fetch，无需认证）
-- **图标库**: Lucide React
-
-## 📁 项目结构
+## 部署
 
 ```bash
-Astrolabe/
-├── dist/                # 生产环境构建产物
-├── images/              # 项目截图
-├── public/              # 静态资源
-├── src/                 # 源代码
-│   ├── api/             # GitHub API 客户端
-│   ├── components/      # 通用 UI 组件
-│   ├── features/        # 功能模块（看板、仓库、提示词、落地页）
-│   ├── hooks/           # 自定义 Hooks
-│   ├── i18n/            # 国际化（中 / 英）
-│   ├── lib/             # 工具函数、缓存、常量
-│   └── types/           # TypeScript 类型定义
-├── docker-compose.yml   # Docker Compose 配置
-├── Dockerfile           # Docker 构建说明
-├── index.html           # 入口 HTML 文件
-├── package.json         # 项目元数据和依赖
-├── tsconfig.json        # TypeScript 配置
-└── vite.config.ts       # Vite 配置
+# 经典 token，不勾任何权限：GitHub → Settings → Developer settings →
+# Personal access tokens → Tokens (classic)
+echo "GITHUB_TOKEN=ghp_..." > .env
+docker compose up -d --build
 ```
 
-## 📄 许可证
+容器监听 `127.0.0.1:3002`。要换 token，改 `.env` 后执行 `docker compose up -d`。
 
-本项目采用 MIT 许可证。详情请参阅 [LICENSE](./LICENSE) 文件。
+| 变量 | 默认 | 作用 |
+|---|---|---|
+| `GITHUB_TOKEN` | | 访问 GitHub 用的 token；没有的话 GitHub 每小时只给 60 次。 |
+| `MAX_STARS` | 3000 | 每个账号分析的最新 Star 数。 |
+| `CACHE_TTL`、`CACHE_MB` | 1h、64 | 缓存多久、占多少内存。 |
+| `FETCH_BURST`、`FETCH_EVERY` | 10、30s | 每个访客访问 GitHub 的查询额度。 |
+| `CLIENT_IP_HEADER` | | 反向代理写入访客地址的请求头（比如 `X-Real-IP`）。 |
+| `ANALYTICS_ORIGINS` | | Content-Security-Policy 额外允许的统计脚本和上报地址。 |
+
+## 本地开发
+
+```bash
+npm install
+npm run dev            # 页面在 :5173，/api 代理到 :8080
+npm test && npm run lint
+
+cd server
+GITHUB_TOKEN=... STATIC_DIR=../dist go run .   # 服务在 :8080
+go test ./...
+```
+
+## 技术栈
+
+React 19、TypeScript、Vite，样式用 Quiet UI，图表是手写的 SVG；服务端是只用标准库的 Go。
+
+## 许可
+
+MIT
