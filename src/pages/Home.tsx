@@ -6,12 +6,12 @@ import { forgetUser, loadRecent } from "../recent";
 import { LOGIN_RE, avatarOf } from "../ui";
 
 const SUGGESTED = [
-  { login: "torvalds", label: "Linus Torvalds" },
-  { login: "yyx990803", label: "Evan You" },
-  { login: "gaearon", label: "Dan Abramov" },
-  { login: "ruanyf", label: "阮一峰" },
-  { login: "antfu", label: "Anthony Fu" },
-  { login: "sindresorhus", label: "Sindre Sorhus" },
+  { login: "karpathy", label: "Andrej Karpathy" },
+  { login: "chiphuyen", label: "Chip Huyen" },
+  { login: "tw93", label: "Tw93" },
+  { login: "halfrost", label: "halfrost" },
+  { login: "jackwener", label: "jakevin" },
+  { login: "WenyXu", label: "Weny Xu" },
 ];
 
 export function Home({ onOpen }: { onOpen: (login: string) => void }) {
