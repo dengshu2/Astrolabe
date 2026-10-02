@@ -1,19 +1,27 @@
+import { useEffect, useRef, useState } from "react";
 import { useLang } from "../i18n";
-import type { MonthCount } from "../stats";
+import { yearTicks, type MonthCount } from "../stats";
 
 /** Stars per month as bars, with a year scale under them. */
 export function Timeline({ months, last30 }: { months: MonthCount[]; last30: number }) {
   const { t } = useLang();
+  const axis = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  // Labels have a fixed size in pixels, so how many fit depends on the
+  // chart's real width, not on a share of it.
+  useEffect(() => {
+    const el = axis.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const n = months.length;
   if (!n) return null;
   const max = Math.max(1, ...months.map((m) => m.count));
   const peak = months.reduce((a, b) => (b.count > a.count ? b : a));
-
-  // Label Januaries (and the first month), at most about seven of them, and
-  // none so close to the previous one that the two would touch.
-  const years = months.map((m, i) => ({ i, m })).filter(({ m, i }) => m.month.endsWith("-01") || i === 0);
-  const step = Math.ceil(years.length / 7);
-  const ticks = years.filter((y, k) => k % step === 0 && (k === 0 || y.i - years[0].i >= n * 0.08));
 
   return (
     <div className="timeline">
@@ -29,12 +37,18 @@ export function Timeline({ months, last30 }: { months: MonthCount[]; last30: num
           )}
         </svg>
       </div>
-      <div className="tl-axis" aria-hidden="true">
-        {ticks.map(({ i, m }) => (
-          <span key={m.month} style={{ left: `${((i + 0.5) / n) * 100}%` }}>
-            {m.month.slice(0, 4)}
-          </span>
-        ))}
+      <div className="tl-axis" ref={axis} aria-hidden="true">
+        {yearTicks(months, width).map(({ i, label }) => {
+          const at = ((i + 0.5) / n) * 100;
+          // Years are centred under their January (the card's padding takes
+          // what reaches past the ends); a lone "2026-03" starts at its month.
+          const shift = label.length > 4 ? "0" : "-50%";
+          return (
+            <span key={i} style={{ left: `${at}%`, transform: `translateX(${shift})` }}>
+              {label}
+            </span>
+          );
+        })}
       </div>
       <p className="q-meta tl-note">
         {t.peak(peak.month, peak.count)} · {t.last30(last30)}

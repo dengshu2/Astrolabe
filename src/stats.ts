@@ -89,6 +89,22 @@ export function timeline(repos: Repo[], now = new Date()): MonthCount[] {
   return out;
 }
 
+/**
+ * Which years to label under a timeline `widthPx` wide: Januaries only,
+ * counted back from the latest, spaced so labels stay `minGapPx` apart.
+ * A span without a January labels its first month.
+ */
+export function yearTicks(months: MonthCount[], widthPx: number, minGapPx = 48): { i: number; label: string }[] {
+  const n = months.length;
+  if (!n || widthPx <= 0) return [];
+  const januaries = months.flatMap((m, i) => (m.month.endsWith("-01") ? [{ i, label: m.month.slice(0, 4) }] : []));
+  if (!januaries.length) return [{ i: 0, label: months[0].month }];
+  const pxPerYear = (12 / n) * widthPx;
+  const step = Math.max(1, Math.ceil(minGapPx / pxPerYear));
+  const last = januaries.length - 1;
+  return januaries.filter((_, k) => (last - k) % step === 0);
+}
+
 export interface Filters {
   query: string;
   health: Health | "all";

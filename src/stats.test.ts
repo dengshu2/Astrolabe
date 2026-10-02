@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyHealth, filterRepos, healthCounts, languageStats, timeline, type Filters } from "./stats";
+import { classifyHealth, filterRepos, healthCounts, languageStats, timeline, yearTicks, type Filters } from "./stats";
 import { makeRepo } from "./test/fixtures";
 
 const NOW = Date.parse("2026-10-02T00:00:00Z");
@@ -82,5 +82,28 @@ describe("filterRepos", () => {
   it("does not reorder the input", () => {
     filterRepos(repos, { ...base, sort: "name" });
     expect(repos[0].full_name).toBe("a/vite");
+  });
+});
+
+describe("yearTicks", () => {
+  // Nov 2010 to Oct 2026, the span of the account in the bug report.
+  const months = timeline([makeRepo({ starred_at: "2010-11-05T00:00:00Z" })], new Date(NOW));
+
+  it("keeps labels apart on a phone and ends with the latest year", () => {
+    const ticks = yearTicks(months, 330);
+    expect(ticks.at(-1)!.label).toBe("2026");
+    const px = (i: number) => (i / months.length) * 330;
+    for (let k = 1; k < ticks.length; k++) expect(px(ticks[k].i) - px(ticks[k - 1].i)).toBeGreaterThanOrEqual(48);
+    expect(ticks.map((t) => t.label)).not.toContain("2010"); // the partial first year is not labelled
+  });
+
+  it("labels every year when there is room", () => {
+    expect(yearTicks(months, 1200)).toHaveLength(16);
+  });
+
+  it("labels the first month of a span without a January", () => {
+    const short = timeline([makeRepo({ starred_at: "2026-03-01T00:00:00Z" })], new Date(NOW));
+    expect(yearTicks(short, 330)).toEqual([{ i: 0, label: "2026-03" }]);
+    expect(yearTicks(short, 0)).toEqual([]);
   });
 });

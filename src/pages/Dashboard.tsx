@@ -4,7 +4,6 @@ import { Footer } from "../components/Footer";
 import { HealthTiles } from "../components/HealthTiles";
 import { Icon, Waiting } from "../components/Icon";
 import { LanguageBars } from "../components/LanguageBars";
-import { Prompts } from "../components/Prompts";
 import { RepoList } from "../components/RepoList";
 import { Timeline } from "../components/Timeline";
 import { useLang, type Dict } from "../i18n";
@@ -95,10 +94,6 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
   const langs = useMemo(() => languageStats(repos), [repos]);
   const months = useMemo(() => timeline(repos), [repos]);
   const last30 = useMemo(() => repos.filter((r) => daysSince(r.starred_at) < 30).length, [repos]);
-  const promptInput = useMemo(
-    () => ({ login: data?.user.login ?? login, total: data?.total ?? 0, recent: repos, languages: langs, health: counts }),
-    [data, login, repos, langs, counts],
-  );
 
   return (
     <>
@@ -184,14 +179,6 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
                   <Timeline months={months} last30={last30} />
                 </section>
               </div>
-
-              <section className="q-sec" aria-labelledby="prompts-title">
-                <div className="sec-head">
-                  <h3 id="prompts-title">{t.prompts}</h3>
-                  <span className="q-meta">{t.promptsLead}</span>
-                </div>
-                <Prompts input={promptInput} />
-              </section>
 
               <section className="q-sec list" ref={listRef} aria-labelledby="repos-title">
                 <h3 id="repos-title">{t.repos}</h3>

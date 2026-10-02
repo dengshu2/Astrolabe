@@ -71,8 +71,7 @@ button { font: inherit; }
 
 .charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 14px; }
 .card { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 16px 18px; border-radius: var(--q-r-l); background: var(--q-surface); box-shadow: var(--q-shadow); }
-.card h3, .sec-head h3, .list > h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--q-sub); }
-.sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.card h3, .list > h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--q-sub); }
 
 .langs { display: grid; gap: 1px; margin: 0 -6px; padding: 0; list-style: none; }
 .lang-row { display: grid; grid-template-columns: minmax(84px, 9.5em) minmax(0, 1fr) 5.6em; align-items: center; gap: 12px; width: 100%; padding: 5px 6px; border-radius: 8px; text-align: left; font-size: 14px; }
@@ -90,17 +89,8 @@ button.lang-row:hover, .lang-row[aria-pressed="true"] { background: var(--q-bubb
 .tl-chart rect:hover { fill: var(--q-ink); }
 .tl-max { position: absolute; top: 0; left: 0; font-size: 12px; color: var(--q-sub); font-variant-numeric: tabular-nums; }
 .tl-axis { position: relative; height: 16px; font-size: 12px; color: var(--q-sub); font-variant-numeric: tabular-nums; }
-.tl-axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
-.tl-axis span:first-child { transform: none; }
+.tl-axis span { position: absolute; white-space: nowrap; }
 .tl-note { margin: 6px 0 0; }
-
-.prompts .q-row { gap: 6px; border-bottom: 0; }
-.prompts li { border-bottom: 1px solid var(--q-line); }
-.prompts li:last-child { border-bottom: 0; }
-.prompt-text {
-  max-height: 340px; overflow: auto; margin: 0 0 14px; padding: 12px 14px; border-radius: var(--q-r-m); background: var(--q-bubble);
-  font-family: var(--q-mono); font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere;
-}
 
 .list { gap: 12px; }
 .list-tools { display: grid; gap: 10px; }

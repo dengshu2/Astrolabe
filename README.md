@@ -10,7 +10,6 @@ Enter a GitHub username and see everything they have starred: which languages, w
 
 - **Health**: each starred repository is active (a commit within a year), quiet for a year, quiet for two, or archived. Choosing one filters the list.
 - **Languages** and a **star timeline** by month.
-- **Two AI prompts** to copy into any assistant: a developer profile, and a plan for sorting the stars into GitHub Lists (with candidates to unstar). They follow the page's language.
 - **The repositories**, searchable and filterable by health and language, sortable, and exportable as JSON or CSV.
 - The newest 3,000 stars of an account are analyzed; the total is always exact. Pages are linkable (`/?user=octocat`) and the page follows the system's light or dark setting, in Chinese or English.
 
