@@ -71,12 +71,13 @@ describe("filterRepos", () => {
 
   it("searches names, descriptions and topics", () => {
     expect(filterRepos(repos, { ...base, query: "GREP" }).map((r) => r.full_name)).toEqual(["b/ripgrep"]);
-    expect(filterRepos(repos, { ...base, query: "bundler" }).map((r) => r.full_name)).toEqual(["a/vite"]);
+    expect(filterRepos(repos, { ...base, query: "BUNDLER" }).map((r) => r.full_name)).toEqual(["a/vite"]);
   });
 
-  it("combines health, language and sort", () => {
+  it("combines health, language, month and sort", () => {
     expect(filterRepos(repos, { ...base, language: "Rust", sort: "stars" }).map((r) => r.full_name)).toEqual(["b/ripgrep", "c/old"]);
     expect(filterRepos(repos, { ...base, health: "archived" }).map((r) => r.full_name)).toEqual(["c/old"]);
+    expect(filterRepos(repos, { ...base, month: "2026-02" }).map((r) => r.full_name)).toEqual(["c/old"]);
   });
 
   it("does not reorder the input", () => {

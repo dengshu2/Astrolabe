@@ -1,7 +1,9 @@
 import { useLang } from "../i18n";
+import { useTheme } from "../theme";
 
 export function Footer() {
   const { t, toggle } = useLang();
+  const { theme, toggle: toggleTheme } = useTheme();
   return (
     <footer className="foot">
       <span>{t.dataFrom}</span>
@@ -12,6 +14,10 @@ export function Footer() {
       <span aria-hidden="true">·</span>
       <button type="button" onClick={toggle}>
         {t.switchTo}
+      </button>
+      <span aria-hidden="true">·</span>
+      <button type="button" onClick={toggleTheme}>
+        {theme === "dark" ? t.lightMode : t.darkMode}
       </button>
     </footer>
   );

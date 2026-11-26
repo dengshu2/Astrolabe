@@ -4,6 +4,9 @@ import "./quiet.css";
 import "./app.css";
 import App from "./App";
 import { LangProvider } from "./i18n";
+import { initTheme } from "./theme";
+
+initTheme();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

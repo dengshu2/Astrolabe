@@ -109,6 +109,7 @@ export interface Filters {
   query: string;
   health: Health | "all";
   language: string | null;
+  month?: string | null;
   sort: SortKey;
 }
 
@@ -118,10 +119,11 @@ export function filterRepos(repos: Repo[], f: Filters, now = Date.now()): Repo[]
     (r) =>
       (f.health === "all" || classifyHealth(r, now) === f.health) &&
       (!f.language || r.language === f.language) &&
+      (!f.month || r.starred_at.startsWith(f.month)) &&
       (!q ||
         r.full_name.toLowerCase().includes(q) ||
         (r.description ?? "").toLowerCase().includes(q) ||
-        r.topics.some((t) => t.includes(q))),
+        r.topics.some((t) => t.toLowerCase().includes(q))),
   );
   const by: Record<SortKey, (a: Repo, b: Repo) => number> = {
     starred: (a, b) => b.starred_at.localeCompare(a.starred_at),

@@ -9,11 +9,44 @@ import { Timeline } from "../components/Timeline";
 import { useLang, type Dict } from "../i18n";
 import { rememberUser } from "../recent";
 import { daysSince, healthCounts, languageStats, timeline, type Filters } from "../stats";
-import type { Health, Stars } from "../types";
+import type { Health, SortKey, Stars } from "../types";
 import { avatar, toast } from "../ui";
 
 /** Answers already loaded in this tab, so back and forward are instant. */
 const loaded = new Map<string, Stars>();
+
+const VALID_HEALTH = new Set<string>(["active", "stale", "abandoned", "archived"]);
+const VALID_SORT = new Set<string>(["starred", "pushed", "stars", "name"]);
+const MONTH_RE = /^\d{4}-\d{2}$/;
+
+function readInitialFilters(): Filters {
+  const sp = new URLSearchParams(window.location.search);
+  const h = sp.get("health");
+  const s = sp.get("sort");
+  const m = sp.get("month");
+  return {
+    query: "",
+    health: h && VALID_HEALTH.has(h) ? (h as Health) : "all",
+    language: sp.get("lang") || null,
+    month: m && MONTH_RE.test(m) ? m : null,
+    sort: s && VALID_SORT.has(s) ? (s as SortKey) : "starred",
+  };
+}
+
+function syncFiltersToUrl(filters: Filters) {
+  const url = new URL(window.location.href);
+  if (filters.health !== "all") url.searchParams.set("health", filters.health);
+  else url.searchParams.delete("health");
+  if (filters.language) url.searchParams.set("lang", filters.language);
+  else url.searchParams.delete("lang");
+  if (filters.month) url.searchParams.set("month", filters.month);
+  else url.searchParams.delete("month");
+  if (filters.sort !== "starred") url.searchParams.set("sort", filters.sort);
+  else url.searchParams.delete("sort");
+  if (url.href !== window.location.href) {
+    window.history.replaceState({}, "", url);
+  }
+}
 
 type State = { status: "loading" } | { status: "ready"; data: Stars } | { status: "error"; error: LoadError };
 
@@ -44,7 +77,7 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
   });
   const [attempt, setAttempt] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [filters, setFilters] = useState<Filters>({ query: "", health: "all", language: null, sort: "starred" });
+  const [filters, setFilters] = useState<Filters>(readInitialFilters);
   const listRef = useRef<HTMLElement>(null);
 
   const accept = useCallback(
@@ -67,6 +100,20 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
     return () => ctl.abort();
   }, [key, login, attempt, accept]);
 
+  const data = state.status === "ready" ? state.data : null;
+
+  useEffect(() => {
+    const who = data?.user.login ?? login;
+    document.title = `${who} · ${t.title}`;
+    return () => {
+      document.title = t.title;
+    };
+  }, [data?.user.login, login, t.title]);
+
+  useEffect(() => {
+    syncFiltersToUrl(filters);
+  }, [filters]);
+
   const retry = () => {
     setState({ status: "loading" });
     setAttempt((a) => a + 1);
@@ -75,8 +122,8 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
   const refresh = () => {
     setRefreshing(true);
     fetchStars(login, { refresh: true })
-      .then((data) => {
-        accept(data);
+      .then((next) => {
+        accept(next);
         toast(t.refreshed);
       })
       .catch((err) => toast(errorText(t, login, asLoadError(err)), "error"))
@@ -88,7 +135,6 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
     listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const data = state.status === "ready" ? state.data : null;
   const repos = useMemo(() => data?.repos ?? [], [data]);
   const counts = useMemo(() => healthCounts(repos), [repos]);
   const langs = useMemo(() => languageStats(repos), [repos]);
@@ -116,11 +162,41 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
       </header>
 
       {state.status === "loading" && (
-        <main className="q-page dash-wait" aria-busy="true">
-          <div className="q-state">
+        <main className="q-page dash dash-wait" aria-busy="true">
+          <div className="q-state dash-wait-note">
             <b>{t.loading(login)}</b>
             <span className="slow">{t.loadingSlow}</span>
             <Waiting />
+          </div>
+          <div className="dash-skel" aria-hidden="true">
+            <div className="skel-profile">
+              <span className="q-skeleton skel-avatar" />
+              <div className="skel-lines">
+                <span className="q-skeleton" style={{ width: 160, height: 22 }} />
+                <span className="q-skeleton" style={{ width: 96, height: 14 }} />
+              </div>
+            </div>
+            <div className="q-tiles">
+              {Array.from({ length: 4 }, (_, i) => (
+                <div key={i} className="q-tile skel-tile">
+                  <span className="q-skeleton" style={{ width: 56, height: 13 }} />
+                  <span className="q-skeleton" style={{ width: 84, height: 26 }} />
+                  <span className="q-skeleton" style={{ width: 112, height: 12 }} />
+                </div>
+              ))}
+            </div>
+            <div className="charts">
+              <div className="card skel-card">
+                <span className="q-skeleton" style={{ width: 72, height: 13 }} />
+                {Array.from({ length: 6 }, (_, i) => (
+                  <span key={i} className="q-skeleton" style={{ width: `${92 - i * 11}%`, height: 16 }} />
+                ))}
+              </div>
+              <div className="card skel-card">
+                <span className="q-skeleton" style={{ width: 84, height: 13 }} />
+                <span className="q-skeleton" style={{ width: "100%", height: 180 }} />
+              </div>
+            </div>
           </div>
         </main>
       )}
@@ -176,7 +252,12 @@ export function Dashboard({ login, onBack }: { login: string; onBack: () => void
                 </section>
                 <section className="card" aria-labelledby="tl-title">
                   <h3 id="tl-title">{t.timeline}</h3>
-                  <Timeline months={months} last30={last30} />
+                  <Timeline
+                    months={months}
+                    last30={last30}
+                    selected={filters.month ?? null}
+                    onSelect={(month) => showInList({ month })}
+                  />
                 </section>
               </div>
 

@@ -36,7 +36,7 @@ export function LanguageBars({ stats, selected, onSelect }: { stats: LanguageSta
                 {row}
               </button>
             ) : (
-              <div className="lang-row">{row}</div>
+              <div className="lang-row lang-row--static">{row}</div>
             )}
           </li>
         );

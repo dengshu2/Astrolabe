@@ -19,6 +19,15 @@ describe("useUrlUser", () => {
     expect(result.current[0]).toBe("");
   });
 
+  it("clears dashboard filter params when switching users or going home", () => {
+    window.history.replaceState({}, "", "/?user=octocat&lang=Rust&health=active&month=2026-08&sort=stars");
+    const { result } = renderHook(() => useUrlUser());
+    act(() => result.current[1]("torvalds"));
+    expect(window.location.search).toBe("?user=torvalds");
+    act(() => result.current[1](""));
+    expect(window.location.search).toBe("");
+  });
+
   it("follows the back button", () => {
     const { result } = renderHook(() => useUrlUser());
     act(() => result.current[1]("ann"));
